@@ -1,0 +1,440 @@
+{
+  "_documentation": {
+    "title": "iConnecTelco — Place Order payload to Pega REST API",
+    "version": "1.0.0",
+    "lastUpdated": "2026-04-24",
+    "description": "This file documents the exact JSON shape that gets POSTed when a customer clicks 'Place order' on the checkout review screen. Two complete examples are provided — one for a card-paid order and one for a 0% APR financed order. The Azure Function broker wraps this in Pega's case-creation envelope before forwarding to the Pega Platform REST API v2.",
+    "flow": [
+      "1. Browser collects customer details across 3 checkout steps (contact/address, payment, review).",
+      "2. On 'Place order' click, browser POSTs the 'browserPayload' shape below to /api/pega-order (an Azure Function endpoint).",
+      "3. The Azure Function authenticates with Pega via OAuth 2.0 client_credentials, then wraps the browserPayload inside Pega's case-creation envelope (see 'pegaCaseEnvelope' below).",
+      "4. The Function POSTs to https://{pega-base-url}/prweb/api/application/v2/cases.",
+      "5. Pega returns a caseID; Function returns it to the browser as { orderId, status, estimatedDelivery }."
+    ],
+    "endpoints": {
+      "browser_to_function": "POST /api/pega-order",
+      "function_to_pega": "POST {PEGA_BASE_URL}/prweb/api/application/v2/cases",
+      "pega_oauth": "POST {PEGA_BASE_URL}/prweb/PRRestService/oauth2/v1/token"
+    },
+    "authentication": "OAuth 2.0 client_credentials grant. The Azure Function holds client_id and client_secret in Azure Key Vault. Tokens are cached in memory until ~30s before expiry. The browser never sees the Pega credentials.",
+    "pii_handling": "Credit card number, CVV, and password are never sent to Pega. Only the card brand and last 4 digits are persisted. Password is routed separately to Azure AD B2C for hashing before account creation."
+  },
+
+  "example_1_card_payment": {
+    "_label": "Customer pays in full with a credit card",
+    "_summary": "New customer Sarah Chen orders an iPhone 17 Pro Max + Plus plan + Apple Watch Series 11. Pays via Visa ending 4242. Ships to her Austin address.",
+
+    "browserPayload": {
+      "customer": {
+        "firstName": "Sarah",
+        "lastName": "Chen",
+        "email": "sarah.chen@example.com",
+        "phone": "(512) 555-0142",
+        "dob": "1992-04-18",
+        "accountType": "new"
+      },
+      "shipping": {
+        "street": "1840 Eastside Drive Apt 3B",
+        "city": "Austin",
+        "state": "TX",
+        "zip": "78704",
+        "country": "US"
+      },
+      "billing": {
+        "street": "1840 Eastside Drive Apt 3B",
+        "city": "Austin",
+        "state": "TX",
+        "zip": "78704",
+        "country": "US"
+      },
+      "payment": {
+        "method": "card",
+        "brand": "Visa",
+        "last4": "4242",
+        "expiry": "12/28",
+        "nameOnCard": "Sarah Chen"
+      },
+      "items": [
+        {
+          "id": "iphone-17-pro-max",
+          "type": "device",
+          "brand": "Apple",
+          "name": "iPhone 17 Pro Max",
+          "price": 1199.00,
+          "storage": 256
+        },
+        {
+          "id": "pl-plus",
+          "type": "plan",
+          "brand": null,
+          "name": "Plus",
+          "price": 45.00,
+          "storage": null
+        },
+        {
+          "id": "apple-watch-11",
+          "type": "accessory",
+          "brand": "Apple",
+          "name": "Apple Watch Series 11",
+          "price": 399.00,
+          "storage": null
+        }
+      ],
+      "totals": {
+        "subtotal": 1643.00,
+        "tax": 135.55,
+        "shipping": 0.00,
+        "deviceTotal": 1199.00,
+        "monthlyFinancing": 0.00,
+        "dueToday": 1778.55,
+        "total": 1778.55
+      },
+      "channel": "web-portal",
+      "submittedAt": "2026-04-24T18:42:11.847Z"
+    },
+
+    "pegaCaseEnvelope": {
+      "_note": "What the Azure Function actually POSTs to Pega. The browserPayload above is wrapped in Pega's case-creation format. caseTypeID must match what your Pega administrator configured for ConnecTelco order cases.",
+      "caseTypeID": "CT-ORDER",
+      "processID": "pyStartCase",
+      "content": {
+        "OrderChannel": "web-portal",
+        "SubmittedAt": "2026-04-24T18:42:11.847Z",
+        "Customer": {
+          "FirstName": "Sarah",
+          "LastName": "Chen",
+          "Email": "sarah.chen@example.com",
+          "MobilePhone": "(512) 555-0142",
+          "DateOfBirth": "1992-04-18",
+          "AccountType": "New",
+          "ConsentMarketing": false,
+          "ConsentTerms": true
+        },
+        "ShippingAddress": {
+          "Line1": "1840 Eastside Drive Apt 3B",
+          "Line2": "",
+          "City": "Austin",
+          "State": "TX",
+          "PostalCode": "78704",
+          "Country": "US"
+        },
+        "BillingAddress": {
+          "Line1": "1840 Eastside Drive Apt 3B",
+          "Line2": "",
+          "City": "Austin",
+          "State": "TX",
+          "PostalCode": "78704",
+          "Country": "US",
+          "SameAsShipping": true
+        },
+        "Payment": {
+          "Method": "Card",
+          "Brand": "Visa",
+          "Last4": "4242",
+          "Expiry": "12/28",
+          "NameOnCard": "Sarah Chen",
+          "TokenizedReference": "tok_simulated_1a2b3c4d",
+          "FinancingMonths": null,
+          "MonthlyAmount": null
+        },
+        "LineItems": [
+          {
+            "SKU": "iphone-17-pro-max",
+            "Type": "Device",
+            "Brand": "Apple",
+            "Name": "iPhone 17 Pro Max",
+            "Quantity": 1,
+            "UnitPrice": 1199.00,
+            "Storage": "256GB",
+            "Color": null
+          },
+          {
+            "SKU": "pl-plus",
+            "Type": "Plan",
+            "Brand": null,
+            "Name": "Plus",
+            "Quantity": 1,
+            "UnitPrice": 45.00,
+            "BillingCycle": "Monthly"
+          },
+          {
+            "SKU": "apple-watch-11",
+            "Type": "Accessory",
+            "Brand": "Apple",
+            "Name": "Apple Watch Series 11",
+            "Quantity": 1,
+            "UnitPrice": 399.00
+          }
+        ],
+        "Totals": {
+          "Subtotal": 1643.00,
+          "Tax": 135.55,
+          "TaxRate": 0.0825,
+          "Shipping": 0.00,
+          "DeviceTotal": 1199.00,
+          "MonthlyFinancing": 0.00,
+          "DueToday": 1778.55,
+          "GrandTotal": 1778.55,
+          "Currency": "USD"
+        },
+        "Source": {
+          "Channel": "web-portal",
+          "UserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15",
+          "SessionId": "sess_M9xQR4ph2L"
+        }
+      }
+    },
+
+    "expectedPegaResponse": {
+      "ID": "CT-ORDER C-482193",
+      "etag": "20260424T184211.847 GMT",
+      "stages": [
+        { "ID": "PRIM0", "name": "Validate Order", "visited_status": "active" }
+      ],
+      "links": {
+        "self": { "href": "/api/application/v2/cases/CT-ORDER%20C-482193" }
+      }
+    },
+
+    "browserResponse": {
+      "_note": "What the Azure Function returns to the browser after Pega responds. The browser uses orderId in the success screen.",
+      "orderId": "ORD-CT482193",
+      "pegaCaseID": "CT-ORDER C-482193",
+      "status": "Processing",
+      "estimatedDelivery": "Next business day",
+      "trackingPlaceholder": "Tracking will be emailed within 4 hours"
+    }
+  },
+
+  "example_2_financing_payment": {
+    "_label": "Customer finances the device over 24 months at 0% APR",
+    "_summary": "Returning customer Marcus Johnson upgrades to a Galaxy S26 Ultra on 24-month financing. Plan monthly stays the same; only the device cost is amortized.",
+
+    "browserPayload": {
+      "customer": {
+        "firstName": "Marcus",
+        "lastName": "Johnson",
+        "email": "marcus.j@example.com",
+        "phone": "(214) 555-0107",
+        "dob": null,
+        "accountType": "existing"
+      },
+      "shipping": {
+        "street": "428 Lemmon Ave",
+        "city": "Dallas",
+        "state": "TX",
+        "zip": "75219",
+        "country": "US"
+      },
+      "billing": {
+        "street": "428 Lemmon Ave",
+        "city": "Dallas",
+        "state": "TX",
+        "zip": "75219",
+        "country": "US"
+      },
+      "payment": {
+        "method": "financing",
+        "brand": "Mastercard",
+        "last4": "5555",
+        "expiry": "08/29",
+        "financingMonths": 24
+      },
+      "items": [
+        {
+          "id": "galaxy-s26-ultra",
+          "type": "device",
+          "brand": "Samsung",
+          "name": "Galaxy S26 Ultra",
+          "price": 1299.99,
+          "storage": 256
+        }
+      ],
+      "totals": {
+        "subtotal": 1299.99,
+        "tax": 107.25,
+        "shipping": 0.00,
+        "deviceTotal": 1299.99,
+        "monthlyFinancing": 54.17,
+        "dueToday": 107.25,
+        "total": 1407.24
+      },
+      "channel": "web-portal",
+      "submittedAt": "2026-04-24T19:08:33.412Z"
+    },
+
+    "pegaCaseEnvelope": {
+      "caseTypeID": "CT-ORDER",
+      "processID": "pyStartCase",
+      "content": {
+        "OrderChannel": "web-portal",
+        "SubmittedAt": "2026-04-24T19:08:33.412Z",
+        "Customer": {
+          "FirstName": "Marcus",
+          "LastName": "Johnson",
+          "Email": "marcus.j@example.com",
+          "MobilePhone": "(214) 555-0107",
+          "DateOfBirth": null,
+          "AccountType": "Existing",
+          "ExistingCustomerID": "CT-CUST-882104"
+        },
+        "ShippingAddress": {
+          "Line1": "428 Lemmon Ave",
+          "Line2": "",
+          "City": "Dallas",
+          "State": "TX",
+          "PostalCode": "75219",
+          "Country": "US"
+        },
+        "BillingAddress": {
+          "Line1": "428 Lemmon Ave",
+          "Line2": "",
+          "City": "Dallas",
+          "State": "TX",
+          "PostalCode": "75219",
+          "Country": "US",
+          "SameAsShipping": true
+        },
+        "Payment": {
+          "Method": "Financing",
+          "Brand": "Mastercard",
+          "Last4": "5555",
+          "Expiry": "08/29",
+          "TokenizedReference": "tok_simulated_5e6f7g8h",
+          "FinancingMonths": 24,
+          "FinancingAPR": 0.00,
+          "MonthlyAmount": 54.17,
+          "FinancingCreditCheckRequired": true,
+          "FinancingCreditCheckType": "soft"
+        },
+        "LineItems": [
+          {
+            "SKU": "galaxy-s26-ultra",
+            "Type": "Device",
+            "Brand": "Samsung",
+            "Name": "Galaxy S26 Ultra",
+            "Quantity": 1,
+            "UnitPrice": 1299.99,
+            "Storage": "256GB",
+            "Color": null,
+            "FinancedAmount": 1299.99
+          }
+        ],
+        "Totals": {
+          "Subtotal": 1299.99,
+          "Tax": 107.25,
+          "TaxRate": 0.0825,
+          "Shipping": 0.00,
+          "DeviceTotal": 1299.99,
+          "MonthlyFinancing": 54.17,
+          "DueToday": 107.25,
+          "GrandTotal": 1407.24,
+          "Currency": "USD"
+        },
+        "Source": {
+          "Channel": "web-portal",
+          "UserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+          "SessionId": "sess_NA8K2pX9aR"
+        }
+      }
+    },
+
+    "expectedPegaResponse": {
+      "ID": "CT-ORDER C-482194",
+      "etag": "20260424T190833.412 GMT",
+      "stages": [
+        { "ID": "PRIM0", "name": "Validate Order", "visited_status": "active" },
+        { "ID": "PRIM1", "name": "Credit Check", "visited_status": "future" }
+      ],
+      "links": {
+        "self": { "href": "/api/application/v2/cases/CT-ORDER%20C-482194" }
+      }
+    },
+
+    "browserResponse": {
+      "orderId": "ORD-CT482194",
+      "pegaCaseID": "CT-ORDER C-482194",
+      "status": "Processing",
+      "estimatedDelivery": "2-3 business days (pending credit check)",
+      "trackingPlaceholder": "Credit decision in under 60 seconds"
+    }
+  },
+
+  "field_reference": {
+    "_note": "Field-by-field documentation. Required = must be present and non-null. Optional = may be null or absent.",
+
+    "customer": {
+      "firstName":   { "type": "string", "required": true,  "maxLength": 60, "example": "Sarah" },
+      "lastName":    { "type": "string", "required": true,  "maxLength": 60, "example": "Chen" },
+      "email":       { "type": "string", "required": true,  "format": "email", "example": "sarah.chen@example.com" },
+      "phone":       { "type": "string", "required": true,  "format": "US-style", "example": "(512) 555-0142" },
+      "dob":         { "type": "string", "required": false, "format": "YYYY-MM-DD", "example": "1992-04-18", "note": "Required for new accounts; null for existing customers" },
+      "accountType": { "type": "string", "required": true,  "enum": ["new", "existing"] }
+    },
+
+    "shipping_and_billing": {
+      "street":  { "type": "string", "required": true,  "maxLength": 120 },
+      "city":    { "type": "string", "required": true,  "maxLength": 60 },
+      "state":   { "type": "string", "required": true,  "format": "US 2-letter code", "example": "TX" },
+      "zip":     { "type": "string", "required": true,  "format": "5 or 9 digits", "example": "78704" },
+      "country": { "type": "string", "required": true,  "default": "US" }
+    },
+
+    "payment_card": {
+      "method":      { "type": "string", "required": true,  "enum": ["card", "financing"] },
+      "brand":       { "type": "string", "required": true,  "enum": ["Visa", "Mastercard", "Amex", "Discover", "Card"] },
+      "last4":       { "type": "string", "required": true,  "format": "4 digits", "note": "Full PAN never transmitted" },
+      "expiry":      { "type": "string", "required": true,  "format": "MM/YY" },
+      "nameOnCard":  { "type": "string", "required": false, "note": "Card method only" }
+    },
+
+    "payment_financing_extras": {
+      "financingMonths": { "type": "integer", "required": true, "enum": [24, 36], "note": "Required when method=financing" }
+    },
+
+    "items": {
+      "id":      { "type": "string",  "required": true,  "note": "SKU identifier matching the catalog" },
+      "type":    { "type": "string",  "required": true,  "enum": ["device", "plan", "accessory", "bundle"] },
+      "brand":   { "type": "string",  "required": false, "note": "null for plans and bundles (ConnecTelco-internal)" },
+      "name":    { "type": "string",  "required": true },
+      "price":   { "type": "number",  "required": true,  "format": "decimal, 2 places" },
+      "storage": { "type": "integer", "required": false, "note": "GB; null for non-device items" }
+    },
+
+    "totals": {
+      "subtotal":         { "type": "number", "required": true },
+      "tax":              { "type": "number", "required": true },
+      "shipping":         { "type": "number", "required": true, "note": "0 if subtotal >= 100" },
+      "deviceTotal":      { "type": "number", "required": true, "note": "Used to calculate financing split" },
+      "monthlyFinancing": { "type": "number", "required": true, "note": "0 if no financing" },
+      "dueToday":         { "type": "number", "required": true, "note": "What gets charged at order time" },
+      "total":            { "type": "number", "required": true, "note": "Subtotal + tax + shipping (excluding financing)" }
+    },
+
+    "envelope": {
+      "channel":     { "type": "string", "required": true, "enum": ["web-portal", "mobile-app", "csr-desktop", "ivr"] },
+      "submittedAt": { "type": "string", "required": true, "format": "ISO 8601 UTC" }
+    }
+  },
+
+  "error_responses": {
+    "_note": "What the browser will show in the success screen if the Pega call fails.",
+    "validation_failure": {
+      "httpStatus": 400,
+      "body": { "error": "validation_failed", "fields": ["customer.email"], "recoverable": false }
+    },
+    "credit_check_declined": {
+      "httpStatus": 200,
+      "body": { "orderId": "ORD-PENDING", "pegaCaseID": "CT-ORDER C-482195", "status": "CreditCheckDeclined", "recoverable": true, "fallbackMessage": "We can't approve financing right now. Please pay in full or contact support." }
+    },
+    "pega_unavailable": {
+      "httpStatus": 502,
+      "body": { "error": "Upstream Pega temporarily unavailable", "recoverable": true, "retryAfterSeconds": 30 }
+    },
+    "demo_mode_8pct_failure": {
+      "_note": "Demo only — the in-browser fetch shim simulates this in 8% of requests for the autonomous-recovery story.",
+      "httpStatus": 502,
+      "body": { "error": "Upstream Pega temporarily unavailable", "recoverable": true }
+    }
+  }
+}

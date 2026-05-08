@@ -1,0 +1,29 @@
+[
+  {
+    "id": "bn-essentials",
+    "cls": "b1",
+    "name": "The Essentials",
+    "save": "Save $420 / year",
+    "desc": "One phone of your choice + Plus mobile plan + 1 Gbps home internet.",
+    "price": 130,
+    "includes": ["1 mobile line (Plus plan)", "1 Gbps home internet", "Free next-day device delivery", "No installation fee"]
+  },
+  {
+    "id": "bn-household",
+    "cls": "b2",
+    "name": "The Household",
+    "save": "Save $680 / year",
+    "desc": "Four lines + 5 Gbps home internet + two watches for the kids.",
+    "price": 260,
+    "includes": ["4 mobile lines (Plus plan)", "5 Gbps home internet", "2 kids smartwatches", "Free mesh Wi-Fi router", "Parental controls"]
+  },
+  {
+    "id": "bn-remote",
+    "cls": "b3",
+    "name": "The Remote Worker",
+    "save": "Save $540 / year",
+    "desc": "Phone + tablet + dedicated hotspot + 1 Gbps home fiber + static IP.",
+    "price": 210,
+    "includes": ["1 mobile line (Ultra plan)", "Cellular tablet line", "Dedicated 5G hotspot", "1 Gbps home fiber", "Static IP address"]
+  }
+]

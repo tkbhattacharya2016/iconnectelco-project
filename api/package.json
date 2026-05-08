@@ -1,0 +1,17 @@
+{
+  "name": "iconnectelco-api",
+  "version": "1.0.0",
+  "description": "Azure Functions (Node.js 20, v4) for iConnecTelco — Pega broker, catalog, auth roles",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "func start",
+    "test": "node --test src/shared/*.test.js"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.5.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

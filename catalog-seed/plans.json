@@ -1,0 +1,74 @@
+{
+  "mobile": [
+    {
+      "id": "pl-essential",
+      "name": "Essential",
+      "tagline": "Everything you need. Nothing you don't.",
+      "price": 35,
+      "data": "20 GB premium + unlimited slower",
+      "features": ["Unlimited talk & text", "5G access", "1080p streaming", "5 GB hotspot"]
+    },
+    {
+      "id": "pl-plus",
+      "name": "Plus",
+      "tagline": "Our most popular plan.",
+      "price": 45,
+      "data": "Unlimited premium 5G",
+      "features": ["Unlimited talk & text", "True unlimited 5G", "4K streaming", "25 GB hotspot", "Free international roaming"],
+      "popular": true
+    },
+    {
+      "id": "pl-ultra",
+      "name": "Ultra",
+      "tagline": "For the data-hungry.",
+      "price": 65,
+      "data": "Unlimited premium 5G + faster",
+      "features": ["Unlimited talk & text", "Priority 5G", "4K streaming", "100 GB hotspot", "Apple Music + Netflix included", "Global roaming"]
+    }
+  ],
+  "internet": [
+    {
+      "id": "in-1gbps",
+      "name": "1 Gbps Fiber",
+      "tagline": "Fast enough for a household.",
+      "price": 65,
+      "data": "1 Gbps up & down",
+      "features": ["Symmetric speeds", "Free mesh router", "No data caps", "No contract"]
+    },
+    {
+      "id": "in-5gbps",
+      "name": "5 Gbps Fiber",
+      "tagline": "For power users and large homes.",
+      "price": 95,
+      "data": "5 Gbps up & down",
+      "features": ["Symmetric speeds", "Pro Wi-Fi 7 router", "No data caps", "Static IP available"],
+      "popular": true
+    }
+  ],
+  "prepaid": [
+    {
+      "id": "pr-15",
+      "name": "Light",
+      "tagline": "Pay-as-you-go.",
+      "price": 15,
+      "data": "5 GB 5G",
+      "features": ["Unlimited talk & text", "No contract", "No credit check"]
+    },
+    {
+      "id": "pr-30",
+      "name": "Everyday",
+      "tagline": "Solid daily driver.",
+      "price": 30,
+      "data": "25 GB 5G",
+      "features": ["Unlimited talk & text", "No contract", "10 GB hotspot"]
+    },
+    {
+      "id": "pr-50",
+      "name": "Unlimited",
+      "tagline": "Prepaid, without compromise.",
+      "price": 50,
+      "data": "Unlimited 5G",
+      "features": ["Unlimited talk & text", "4K streaming", "20 GB hotspot", "No contract"]
+    }
+  ]
+}

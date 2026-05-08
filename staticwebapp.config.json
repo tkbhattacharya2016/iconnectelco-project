@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json.schemastore.org/staticwebapp.config.json",
+  "routes": [
+    {
+      "route": "/",
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/portal",
+      "redirect": "/portal/",
+      "statusCode": 301
+    },
+    {
+      "route": "/portal/",
+      "rewrite": "/portal/index.html"
+    },
+    {
+      "route": "/csr",
+      "redirect": "/csr/",
+      "statusCode": 301
+    },
+    {
+      "route": "/csr/*",
+      "allowedRoles": ["csr"],
+      "rewrite": "/csr/index.html"
+    },
+    {
+      "route": "/api/catalog",
+      "allowedRoles": ["anonymous", "authenticated"]
+    },
+    {
+      "route": "/api/pega-case",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/pega-order",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/health",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/api/auth-roles",
+      "allowedRoles": ["anonymous", "authenticated"]
+    },
+    {
+      "route": "/.auth/login/aad",
+      "rewrite": "/.auth/login/aad"
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/api/*", "/*.{css,js,png,jpg,jpeg,webp,svg,ico,woff,woff2}", "/portal/*", "/csr/*"]
+  },
+  "responseOverrides": {
+    "401": {
+      "statusCode": 302,
+      "redirect": "/.auth/login/aad?post_login_redirect_uri=/"
+    },
+    "403": {
+      "rewrite": "/index.html"
+    },
+    "404": {
+      "rewrite": "/index.html"
+    }
+  },
+  "auth": {
+    "rolesSource": "/api/auth-roles",
+    "identityProviders": {
+      "azureActiveDirectory": {
+        "registration": {
+          "openIdIssuer": "https://login.microsoftonline.com/<TENANT_ID>/v2.0",
+          "clientIdSettingName": "AAD_CLIENT_ID",
+          "clientSecretSettingName": "AAD_CLIENT_SECRET"
+        }
+      }
+    }
+  },
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "SAMEORIGIN",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+  },
+  "mimeTypes": {
+    ".webp": "image/webp",
+    ".json": "application/json"
+  }
+}

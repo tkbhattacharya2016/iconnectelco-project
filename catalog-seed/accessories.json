@@ -1,0 +1,62 @@
+[
+  {
+    "id": "apple-watch-11",
+    "brand": "Apple",
+    "category": "Watch",
+    "name": "Apple Watch Series 11",
+    "price": 399,
+    "features": ["46mm aluminum", "5G cellular", "24h battery", "watchOS 26"],
+    "image": "https://cdn.iconnectelco.com/accessories/apple-watch-11/main.webp",
+    "fallbackAccent": "#d56b3b"
+  },
+  {
+    "id": "airpods-pro-3",
+    "brand": "Apple",
+    "category": "Earbuds",
+    "name": "AirPods Pro 3",
+    "price": 249,
+    "features": ["H2 chip", "2\u00d7 ANC", "Heart-rate sensor", "IP57"],
+    "image": "https://cdn.iconnectelco.com/accessories/airpods-pro-3/main.webp",
+    "fallbackAccent": "#e8e3d8"
+  },
+  {
+    "id": "galaxy-watch-8-classic",
+    "brand": "Samsung",
+    "category": "Watch",
+    "name": "Galaxy Watch 8 Classic",
+    "price": 499,
+    "features": ["46mm titanium", "Rotating bezel", "Wear OS 6", "Gemini AI"],
+    "image": "https://cdn.iconnectelco.com/accessories/galaxy-watch-8-classic/main.webp",
+    "fallbackAccent": "#1a1a1a"
+  },
+  {
+    "id": "galaxy-buds-3-pro",
+    "brand": "Samsung",
+    "category": "Earbuds",
+    "name": "Galaxy Buds 3 Pro",
+    "price": 249,
+    "features": ["ANC", "Hi-Fi 24-bit", "Galaxy AI translate", "IP57"],
+    "image": "https://cdn.iconnectelco.com/accessories/galaxy-buds-3-pro/main.webp",
+    "fallbackAccent": "#d8d8d8"
+  },
+  {
+    "id": "pixel-watch-4",
+    "brand": "Google",
+    "category": "Watch",
+    "name": "Pixel Watch 4",
+    "price": 349,
+    "features": ["41mm aluminum", "Wear OS 6", "30h battery", "Gemini built-in"],
+    "image": "https://cdn.iconnectelco.com/accessories/pixel-watch-4/main.webp",
+    "fallbackAccent": "#1d1d1b"
+  },
+  {
+    "id": "pixel-buds-pro-2",
+    "brand": "Google",
+    "category": "Earbuds",
+    "name": "Pixel Buds Pro 2",
+    "price": 229,
+    "features": ["Tensor A1 chip", "Silent Seal 2.0", "Gemini live", "IP54"],
+    "image": "https://cdn.iconnectelco.com/accessories/pixel-buds-pro-2/main.webp",
+    "fallbackAccent": "#6a8d6b"
+  }
+]

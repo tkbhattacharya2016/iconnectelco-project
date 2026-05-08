@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>iConnecTelco CSR · Agent Desktop (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   iConnecTelco CSR Desktop — Agent-grade interface
+   Aesthetic: terminal-adjacent, dense, keyboard-first.
+   Dark foundation, surgical accent use, monospace everywhere.
+   ========================================================= */
+:root {
+  --bg-0: #0a0a0b;           /* deepest */
+  --bg-1: #111114;           /* surface */
+  --bg-2: #17171c;           /* elevated */
+  --bg-3: #1e1e25;           /* hover */
+  --bg-4: #2a2a33;           /* border-ish */
+
+  --line: #252530;
+  --line-soft: #1c1c24;
+  --line-strong: #3a3a46;
+
+  --ink: #e8e6e1;            /* primary text */
+  --ink-2: #b4b0a8;          /* secondary */
+  --ink-3: #72706b;          /* tertiary */
+  --ink-4: #4a4844;          /* quaternary */
+
+  --accent: #f97316;         /* CSR wants hotter, more urgent orange */
+  --accent-dim: #c2410c;
+  --accent-glow: rgba(249,115,22,0.15);
+
+  --ok: #4ade80;
+  --ok-dim: #16a34a;
+  --warn: #facc15;
+  --warn-dim: #a16207;
+  --err: #f87171;
+  --err-dim: #dc2626;
+  --info: #60a5fa;
+  --info-dim: #2563eb;
+
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --ff-ui: 'Inter Tight', system-ui, sans-serif;
+
+  --topbar-h: 48px;
+  --statusbar-h: 26px;
+  --rail-w: 52px;
+  --queue-w: 320px;
+  --context-w: 340px;
+
+  --ease: cubic-bezier(.2,.7,.2,1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body.csr {
+  font-family: var(--ff-ui);
+  background: var(--bg-0);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.45;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; background: none; border: none; outline: none; }
+a { color: inherit; text-decoration: none; }
+kbd {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  padding: 2px 5px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink-2);
+  letter-spacing: 0.05em;
+}
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 260px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 0 12px;
+  z-index: 100;
+}
+.topbar-brand { display: flex; align-items: center; gap: 10px; }
+.logo-mark { color: var(--accent); font-size: 16px; }
+.logo-text {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+}
+.logo-text em { color: var(--ink-3); font-style: normal; margin: 0 4px; }
+.env-chip {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  background: var(--ok-dim);
+  color: #0a2510;
+  border-radius: 2px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.cmd-palette {
+  display: flex; align-items: center; gap: 10px;
+  height: 30px;
+  padding: 0 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: all .15s var(--ease);
+  max-width: 560px;
+  margin: 0 auto;
+  width: 100%;
+}
+.cmd-palette:hover {
+  border-color: var(--line-strong);
+  background: var(--bg-3);
+}
+.cmd-palette span { flex: 1; font-size: 12px; }
+.cmd-palette kbd { margin-left: auto; }
+
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.kpi-inline {
+  display: flex; flex-direction: column;
+  padding: 0 10px;
+  border-left: 1px solid var(--line);
+  line-height: 1;
+}
+.kpi-inline .kpi-label {
+  font-family: var(--ff-mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.kpi-inline .kpi-val {
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.kpi-inline.ok .kpi-val { color: var(--ok); }
+
+.status-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 12px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all .2s var(--ease);
+}
+.status-pill .status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 8px var(--ok);
+}
+.status-pill.away .status-dot { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+.status-pill.busy .status-dot { background: var(--err); box-shadow: 0 0 8px var(--err); }
+.status-pill:hover { border-color: var(--line-strong); }
+
+.agent-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+  color: #1a0a00;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+.app-shell {
+  position: fixed;
+  top: var(--topbar-h);
+  bottom: var(--statusbar-h);
+  left: 0; right: 0;
+  display: grid;
+  grid-template-columns: var(--rail-w) var(--queue-w) 1fr var(--context-w);
+  min-height: 0;
+}
+
+/* LEFT RAIL */
+.rail {
+  background: var(--bg-1);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+}
+.rail-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.rail-foot { padding-bottom: 4px; }
+.rail-btn {
+  width: 38px; height: 38px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-3);
+  position: relative;
+  transition: all .15s var(--ease);
+}
+.rail-btn:hover { background: var(--bg-3); color: var(--ink); }
+.rail-btn.active {
+  background: var(--bg-3);
+  color: var(--accent);
+}
+.rail-btn.active::before {
+  content: '';
+  position: absolute; left: -8px; top: 8px; bottom: 8px;
+  width: 2px; background: var(--accent);
+  border-radius: 2px;
+}
+
+/* =========================================================
+   QUEUE PANEL
+   ========================================================= */
+.queue-panel {
+  background: var(--bg-1);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  min-height: 0;
+}
+.panel-head {
+  padding: 14px 16px 10px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  border-bottom: 1px solid var(--line);
+}
+.panel-head h2, .panel-head h3 {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+.panel-sub {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.panel-actions { display: flex; gap: 4px; }
+.tiny-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--ff-mono);
+  color: var(--ink-2);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  transition: all .15s var(--ease);
+}
+.tiny-btn:hover { background: var(--bg-3); color: var(--ink); border-color: var(--line-strong); }
+
+.queue-tabs {
+  display: flex;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+}
+.qtab {
+  padding: 10px 10px;
+  font-size: 11px;
+  color: var(--ink-3);
+  border-bottom: 2px solid transparent;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+  transition: color .15s var(--ease);
+}
+.qtab span {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  padding: 1px 5px;
+  background: var(--bg-3);
+  border-radius: 3px;
+  color: var(--ink-2);
+}
+.qtab:hover { color: var(--ink); }
+.qtab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.qtab.active span { background: var(--accent-glow); color: var(--accent); }
+
+.queue-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px;
+}
+.queue-list::-webkit-scrollbar { width: 6px; }
+.queue-list::-webkit-scrollbar-track { background: transparent; }
+.queue-list::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 3px; }
+
+.queue-item {
+  padding: 10px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background .12s var(--ease);
+  position: relative;
+  border-left: 2px solid transparent;
+}
+.queue-item:hover { background: var(--bg-2); }
+.queue-item.active {
+  background: var(--bg-3);
+  border-left-color: var(--accent);
+}
+.queue-item.urgent { border-left-color: var(--err); }
+.queue-item.urgent.active { background: var(--bg-3); }
+
+.qi-row1 {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 4px;
+}
+.qi-type {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 2px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.qi-type.act { background: rgba(96,165,250,0.12); color: var(--info); }
+.qi-type.upg { background: rgba(74,222,128,0.12); color: var(--ok); }
+.qi-type.sim { background: rgba(250,204,21,0.12); color: var(--warn); }
+.qi-type.port { background: rgba(249,115,22,0.12); color: var(--accent); }
+.qi-type.bill { background: rgba(248,113,113,0.12); color: var(--err); }
+.qi-type.plan { background: rgba(167,139,250,0.12); color: #a78bfa; }
+
+.qi-wait {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+}
+.qi-wait.warn { color: var(--warn); }
+.qi-wait.err { color: var(--err); }
+
+.qi-customer {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+.qi-summary {
+  font-size: 11px;
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.qi-meta {
+  display: flex; gap: 8px;
+  margin-top: 6px;
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  color: var(--ink-4);
+  letter-spacing: 0.04em;
+}
+.qi-meta span { display: flex; align-items: center; gap: 3px; }
+.qi-meta svg { width: 10px; height: 10px; }
+
+/* =========================================================
+   WORKSPACE — Customer 360
+   ========================================================= */
+.workspace {
+  background: var(--bg-0);
+  overflow-y: auto;
+  min-height: 0;
+}
+.workspace::-webkit-scrollbar { width: 8px; }
+.workspace::-webkit-scrollbar-track { background: transparent; }
+.workspace::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 4px; }
+
+.ws-empty {
+  height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 48px;
+  color: var(--ink-3);
+}
+.ws-empty-mark {
+  font-size: 72px;
+  color: var(--bg-3);
+  margin-bottom: 20px;
+  animation: slowrotate 20s linear infinite;
+}
+@keyframes slowrotate { to { transform: rotate(360deg); } }
+.ws-empty h3 {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.ws-empty p { font-size: 13px; margin-bottom: 32px; }
+.ws-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 28px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+}
+.ws-shortcuts kbd { margin-right: 10px; }
+
+/* Workspace header (when case is loaded) */
+.ws-header {
+  padding: 16px 24px;
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: center;
+  position: sticky;
+  top: 0; z-index: 10;
+}
+.ws-title-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 6px;
+}
+.ws-case-id {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  background: var(--accent-glow);
+  color: var(--accent);
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.ws-customer-name {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.ws-status-chip {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: rgba(96,165,250,0.12);
+  color: var(--info);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.ws-meta-row {
+  display: flex; gap: 16px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+}
+.ws-meta-row strong { color: var(--ink-2); font-weight: 500; margin-right: 4px; }
+
+.ws-header-actions {
+  display: flex; gap: 6px;
+}
+.act-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-2);
+  transition: all .15s var(--ease);
+}
+.act-btn:hover { background: var(--bg-3); color: var(--ink); border-color: var(--line-strong); }
+.act-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #1a0a00;
+}
+.act-btn.primary:hover { background: #fb923c; color: #1a0a00; }
+.act-btn.danger:hover { color: var(--err); border-color: var(--err-dim); }
+
+.ws-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  padding: 1px;
+}
+.ws-card {
+  background: var(--bg-1);
+  padding: 16px;
+  min-height: 0;
+}
+.ws-card.span2 { grid-column: span 2; }
+.ws-card.span3 { grid-column: span 3; }
+.card-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.card-title {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.card-link {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+/* Field / value pairs */
+.fv-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  padding: 5px 0;
+  font-size: 12px;
+  border-bottom: 1px dashed var(--line-soft);
+}
+.fv-row:last-child { border-bottom: none; }
+.fv-label {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  padding-top: 1px;
+}
+.fv-val { color: var(--ink); font-weight: 500; }
+.fv-val.mono { font-family: var(--ff-mono); font-size: 11px; }
+.fv-val.ok { color: var(--ok); }
+.fv-val.warn { color: var(--warn); }
+.fv-val.err { color: var(--err); }
+
+/* Usage bars */
+.usage-bar {
+  margin-top: 6px;
+}
+.usage-top {
+  display: flex; justify-content: space-between;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  margin-bottom: 4px;
+}
+.usage-track {
+  height: 4px;
+  background: var(--bg-3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.usage-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width .5s var(--ease);
+}
+.usage-fill.ok { background: var(--ok); }
+.usage-fill.warn { background: var(--warn); }
+.usage-fill.err { background: var(--err); }
+
+/* Timeline */
+.timeline { list-style: none; margin: 0; padding: 0; }
+.timeline li {
+  position: relative;
+  padding: 8px 0 8px 20px;
+  border-left: 1px solid var(--line);
+  margin-left: 4px;
+  font-size: 11px;
+}
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: -4px; top: 12px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--bg-3);
+  border: 1.5px solid var(--line-strong);
+}
+.timeline li.ok::before { background: var(--ok); border-color: var(--ok); box-shadow: 0 0 8px var(--ok-dim); }
+.timeline li.warn::before { background: var(--warn); border-color: var(--warn); }
+.timeline li.err::before { background: var(--err); border-color: var(--err); }
+.timeline li.active::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulseDot 1.5s ease-in-out infinite; }
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+.tl-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 2px;
+}
+.tl-title { font-weight: 500; color: var(--ink); font-size: 12px; }
+.tl-time { font-family: var(--ff-mono); font-size: 10px; color: var(--ink-3); }
+.tl-desc { color: var(--ink-2); font-size: 11px; }
+.tl-desc code {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  background: var(--bg-2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--ink-2);
+}
+
+/* Table */
+.ws-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.ws-table thead th {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 600;
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+.ws-table tbody td {
+  padding: 8px;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink-2);
+}
+.ws-table tbody tr:hover { background: var(--bg-2); }
+.ws-table tbody td.mono { font-family: var(--ff-mono); font-size: 10px; color: var(--ink-3); }
+.ws-table tbody td.num { text-align: right; font-family: var(--ff-mono); }
+.ws-table .row-status {
+  display: inline-block;
+  width: 7px; height: 7px; border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* Quick actions grid */
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.qa-card {
+  padding: 10px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  text-align: left;
+  display: flex; flex-direction: column;
+  gap: 4px;
+  transition: all .15s var(--ease);
+  cursor: pointer;
+}
+.qa-card:hover {
+  background: var(--bg-3);
+  border-color: var(--accent-dim);
+}
+.qa-card .qa-icon { font-size: 16px; color: var(--accent); margin-bottom: 4px; }
+.qa-card .qa-title { font-size: 12px; font-weight: 500; }
+.qa-card .qa-sub {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+
+/* =========================================================
+   CONTEXT PANE / COPILOT
+   ========================================================= */
+.context-pane {
+  background: var(--bg-1);
+  border-left: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  min-height: 0;
+}
+.pill-live {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  padding: 2px 7px;
+  background: rgba(74,222,128,0.1);
+  color: var(--ok);
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.pill-live span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--ok);
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+.copilot-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex; flex-direction: column;
+  gap: 12px;
+}
+.copilot-body::-webkit-scrollbar { width: 6px; }
+.copilot-body::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 3px; }
+
+.copilot-msg {
+  padding: 12px;
+  background: var(--bg-2);
+  border-radius: 6px;
+  border-left: 2px solid var(--accent);
+  font-size: 12px;
+}
+.copilot-msg.system { border-left-color: var(--ink-4); }
+.copilot-msg.agent { border-left-color: var(--info); }
+.copilot-label {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.copilot-msg p { color: var(--ink-2); line-height: 1.5; }
+.copilot-msg strong { color: var(--ink); }
+.copilot-msg ul { margin: 6px 0 0 16px; color: var(--ink-2); font-size: 11px; }
+.copilot-msg ul li { margin-bottom: 3px; }
+
+.copilot-tools {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  padding: 8px 12px;
+  border-top: 1px solid var(--line);
+}
+.copilot-input {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px 12px;
+}
+.copilot-input input {
+  flex: 1;
+  height: 32px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0 12px;
+  font-size: 12px;
+  transition: border-color .15s var(--ease);
+}
+.copilot-input input:focus { border-color: var(--accent); }
+
+/* =========================================================
+   STATUS BAR
+   ========================================================= */
+.statusbar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--statusbar-h);
+  background: var(--bg-1);
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 12px;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.03em;
+  z-index: 50;
+}
+.status-left, .status-right { display: flex; gap: 16px; align-items: center; }
+.status-item { display: flex; align-items: center; gap: 6px; }
+.status-item .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ink-4);
+}
+.status-item .dot.ok { background: var(--ok); box-shadow: 0 0 6px var(--ok-dim); }
+.status-item .dot.warn { background: var(--warn); box-shadow: 0 0 6px var(--warn-dim); }
+.status-item .dot.err { background: var(--err); box-shadow: 0 0 6px var(--err-dim); }
+.clock { color: var(--ink-2); font-weight: 500; }
+
+/* =========================================================
+   COMMAND PALETTE
+   ========================================================= */
+.palette-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: flex-start; justify-content: center;
+  padding-top: 12vh;
+  z-index: 500;
+}
+.palette-overlay.open { display: flex; }
+.palette {
+  width: 100%;
+  max-width: 640px;
+  background: var(--bg-1);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.palette-input {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.palette-input svg { color: var(--ink-3); }
+.palette-input input {
+  flex: 1;
+  font-size: 14px;
+  background: transparent;
+}
+.palette-results {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 6px;
+}
+.palette-group-title {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  padding: 10px 10px 6px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.palette-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.palette-item:hover, .palette-item.selected { background: var(--bg-3); }
+.palette-item.selected {
+  border-left: 2px solid var(--accent);
+  padding-left: 8px;
+}
+.palette-item-icon {
+  width: 22px; height: 22px;
+  background: var(--bg-3);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--ink-2);
+}
+.palette-item-body { flex: 1; min-width: 0; }
+.palette-item-title { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette-item-meta { font-family: var(--ff-mono); font-size: 10px; color: var(--ink-3); }
+.palette-item-type {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  background: var(--bg-2);
+  border-radius: 3px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.palette-foot {
+  display: flex; gap: 16px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--line);
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+}
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+.toast {
+  position: fixed;
+  bottom: calc(var(--statusbar-h) + 16px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 8px 16px;
+  background: var(--bg-3);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: all .25s var(--ease);
+  z-index: 400;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* =========================================================
+   RESPONSIVE GUARDRAILS — CSR desktop is primarily for ≥1280px
+   ========================================================= */
+@media (max-width: 1280px) {
+  :root { --queue-w: 280px; --context-w: 300px; }
+  .ws-grid { grid-template-columns: 1fr 1fr; }
+  .ws-card.span3 { grid-column: span 2; }
+}
+@media (max-width: 1024px) {
+  .context-pane { display: none; }
+  .app-shell { grid-template-columns: var(--rail-w) var(--queue-w) 1fr; }
+}
+
+.demo-badge{position:fixed;bottom:40px;left:12px;z-index:9998;padding:5px 10px;background:rgba(10,10,11,0.9);color:#f97316;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.1em;border-radius:4px;display:flex;align-items:center;gap:6px}.demo-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:#f97316;box-shadow:0 0 8px #f97316;animation:demoBlink 1.6s ease-in-out infinite}@keyframes demoBlink{0%,100%{opacity:1}50%{opacity:0.3}}.demo-badge a{color:#72706b;margin-left:4px;text-decoration:underline}.demo-badge a:hover{color:#fff}
+
+/* Cognizant co-branding (CSR dark theme) */
+.cognizant-wordmark{font-family:'Figtree','Inter',system-ui,sans-serif;font-weight:600;font-size:14px;color:#5b8def;letter-spacing:-0.02em;line-height:1;display:inline-flex;align-items:center;height:22px}
+.cognizant-divider{width:1px;height:18px;background:rgba(255,255,255,0.18);margin:0 12px;flex-shrink:0}
+.cobrand-lockup{display:flex;align-items:center;gap:0}
+
+</style>
+</head>
+<body class="csr">
+
+<!-- Top bar -->
+<header class="topbar">
+  <div class="cobrand-lockup" style="display:inline-flex;align-items:center;margin-right:14px">
+    <span class="cognizant-wordmark">Cognizant</span>
+    <span class="cognizant-divider"></span>
+  </div>
+  <div class="topbar-brand">
+    <svg width="22" height="22" viewBox="0 0 80 80" style="display:inline-block;vertical-align:middle"><rect x="16" y="34" width="5" height="6" rx="1" fill="currentColor"/><rect x="25" y="30" width="5" height="10" rx="1" fill="currentColor"/><rect x="34" y="26" width="5" height="14" rx="1" fill="currentColor"/><rect x="42.5" y="10" width="5" height="62" rx="1" fill="#f97316"/><rect x="51" y="26" width="5" height="14" rx="1" fill="currentColor"/><rect x="60" y="30" width="5" height="10" rx="1" fill="currentColor"/><rect x="69" y="34" width="5" height="6" rx="1" fill="currentColor"/><rect x="12" y="40" width="66" height="5" rx="1" fill="currentColor"/></svg>
+    <span class="logo-text">iConnecTelco <em>·</em> CSR</span>
+    <span class="env-chip">PROD</span>
+  </div>
+
+  <div class="cmd-palette" id="cmdPaletteTrigger" onclick="openPalette()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <span>Search customers, orders, cases, numbers…</span>
+    <kbd>⌘K</kbd>
+  </div>
+
+  <div class="topbar-right">
+    <div class="kpi-inline">
+      <span class="kpi-label">QUEUE</span>
+      <span class="kpi-val">12</span>
+    </div>
+    <div class="kpi-inline">
+      <span class="kpi-label">AHT</span>
+      <span class="kpi-val">4:32</span>
+    </div>
+    <div class="kpi-inline ok">
+      <span class="kpi-label">SLA</span>
+      <span class="kpi-val">98.2%</span>
+    </div>
+    <button class="status-pill available" id="agentStatus" onclick="toggleStatus()">
+      <span class="status-dot"></span>
+      <span id="statusLabel">Available</span>
+    </button>
+    <div class="agent-avatar">SK</div>
+  </div>
+</header>
+
+<!-- Main layout -->
+<div class="app-shell">
+
+  <!-- LEFT RAIL: Queue + tools -->
+  <aside class="rail">
+    <nav class="rail-nav">
+      <button class="rail-btn active" data-view="queue" title="Queue (1)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1.5"/><circle cx="4" cy="12" r="1.5"/><circle cx="4" cy="18" r="1.5"/></svg></button>
+      <button class="rail-btn" data-view="cases" title="My cases (2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2Z"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+      <button class="rail-btn" data-view="knowledge" title="Knowledge (3)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg></button>
+      <button class="rail-btn" data-view="reports" title="Reports (4)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></button>
+    </nav>
+    <div class="rail-foot">
+      <button class="rail-btn" title="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    </div>
+  </aside>
+
+  <!-- QUEUE PANEL -->
+  <section class="queue-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Queue</h2>
+        <span class="panel-sub">12 waiting · 3 in progress · 1 escalated</span>
+      </div>
+      <div class="panel-actions">
+        <button class="tiny-btn" onclick="refreshQueue()">↻</button>
+        <button class="tiny-btn">Filter</button>
+      </div>
+    </div>
+
+    <div class="queue-tabs">
+      <button class="qtab active" data-queue="all">All <span>12</span></button>
+      <button class="qtab" data-queue="urgent">Urgent <span>3</span></button>
+      <button class="qtab" data-queue="escalated">Escalated <span>1</span></button>
+      <button class="qtab" data-queue="callback">Callback <span>5</span></button>
+    </div>
+
+    <div class="queue-list" id="queueList"></div>
+  </section>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="workspace" id="workspace">
+    <!-- Customer 360 will be rendered here -->
+    <div class="ws-empty">
+      <div class="ws-empty-mark"><svg width="60" height="60" viewBox="0 0 80 80" style="opacity:0.4"><rect x="16" y="34" width="5" height="6" rx="1" fill="currentColor"/><rect x="25" y="30" width="5" height="10" rx="1" fill="currentColor"/><rect x="34" y="26" width="5" height="14" rx="1" fill="currentColor"/><rect x="42.5" y="10" width="5" height="62" rx="1" fill="#f97316"/><rect x="51" y="26" width="5" height="14" rx="1" fill="currentColor"/><rect x="60" y="30" width="5" height="10" rx="1" fill="currentColor"/><rect x="69" y="34" width="5" height="6" rx="1" fill="currentColor"/><rect x="12" y="40" width="66" height="5" rx="1" fill="currentColor"/></svg></div>
+      <h3>Select an interaction to begin</h3>
+      <p>Pick a case from the queue, or press <kbd>⌘K</kbd> to search.</p>
+      <div class="ws-shortcuts">
+        <div><kbd>⌘K</kbd> Command palette</div>
+        <div><kbd>⌘J</kbd> Jump to case</div>
+        <div><kbd>N</kbd> New interaction</div>
+        <div><kbd>W</kbd> Wrap-up</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- RIGHT PANE: Context + AI copilot -->
+  <aside class="context-pane">
+    <div class="panel-head">
+      <h3>Copilot</h3>
+      <span class="pill-live"><span></span>Live</span>
+    </div>
+    <div class="copilot-body" id="copilotBody">
+      <div class="copilot-msg system">
+        <div class="copilot-label">Ready</div>
+        <p>I'll summarise calls, suggest actions, and draft responses in real time. Select a case to activate.</p>
+      </div>
+    </div>
+    <div class="copilot-tools">
+      <button class="tiny-btn" onclick="copilotAction('summarise')">Summarise</button>
+      <button class="tiny-btn" onclick="copilotAction('draft')">Draft reply</button>
+      <button class="tiny-btn" onclick="copilotAction('next')">Next best action</button>
+    </div>
+    <div class="copilot-input">
+      <input type="text" placeholder="Ask copilot…" id="copilotInput" onkeydown="copilotKey(event)" />
+      <kbd>↵</kbd>
+    </div>
+  </aside>
+</div>
+
+<!-- Bottom status bar -->
+<footer class="statusbar">
+  <div class="status-left">
+    <span class="status-item"><span class="dot ok"></span>Pega · v24.2 · Healthy</span>
+    <span class="status-item"><span class="dot ok"></span>Azure Functions · 18ms</span>
+    <span class="status-item"><span class="dot warn"></span>CRM sync · 2 pending</span>
+  </div>
+  <div class="status-right">
+    <span class="status-item">Build 4.2.0</span>
+    <span class="status-item">sk@iconnectelco.com</span>
+    <span class="status-item clock" id="clock">00:00:00</span>
+  </div>
+</footer>
+
+<!-- COMMAND PALETTE -->
+<div class="palette-overlay" id="paletteOverlay" onclick="closePalette(event)">
+  <div class="palette" onclick="event.stopPropagation()">
+    <div class="palette-input">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="text" id="paletteInput" placeholder="Search customers, orders, cases, knowledge…" autocomplete="off" />
+      <kbd>ESC</kbd>
+    </div>
+    <div class="palette-results" id="paletteResults"></div>
+    <div class="palette-foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){const o=window.fetch;window.fetch=async function(u,opt){if(typeof u!=='string'||!u.startsWith('/api/'))return o.apply(this,arguments);const b=opt&&opt.body?JSON.parse(opt.body):{};await new Promise(r=>setTimeout(r,600+Math.random()*900));if(Math.random()<0.08&&u==='/api/pega-case'){return new Response(JSON.stringify({error:'Upstream Pega temporarily unavailable',recoverable:true}),{status:502,headers:{'Content-Type':'application/json'}});}let p={};if(u==='/api/pega-case'){p={caseID:'CT-'+Math.floor(Math.random()*900000+100000),status:'Resolved-Completed',eta:'Live in 8-12 minutes',simulated:true};}else if(u==='/api/pega-order'){p={orderId:'ORD-'+Date.now().toString(36).toUpperCase(),total:(b.items||[]).reduce((s,i)=>s+(i.price||0),0),itemCount:(b.items||[]).length,status:'Processing',estimatedDelivery:'Next business day',simulated:true};}return new Response(JSON.stringify(p),{status:200,headers:{'Content-Type':'application/json'}});};console.info('%c iConnecTelco CSR Demo Mode ','background:#f97316;color:#000;padding:2px 8px;border-radius:3px;font-weight:bold;','API calls simulated locally.');})();
+/* =========================================================
+   iConnecTelco CSR DESKTOP — application logic
+   - Queue rendering + filtering
+   - Customer 360 workspace (case load, all panels)
+   - Command palette (fuzzy search across entities)
+   - Copilot (scripted assistant with contextual suggestions)
+   - Keyboard shortcuts
+   - Shared /api/pega-case and /api/pega-order with customer portal
+   ========================================================= */
+
+/* ---------- Mock queue data ---------- */
+const queueData = [
+  {
+    id: 'M-842301', type: 'PORT', customer: 'Ananya Rao', summary: 'Port from Verizon — PIN mismatch, auto-retry failed',
+    wait: '0:42', status: 'urgent', channel: 'chat', tier: 'Ultra', msisdn: '+1-214-555-0101', accountId: 'AC-99812',
+    description: 'Customer attempted to port in from Verizon. Autonomous workflow retried twice with provided PIN. Third attempt suspended — manual verification required.',
+    aiSummary: 'Likely cause: transfer PIN entered with trailing whitespace. Recommend: confirm PIN via secondary auth, retry port with cleaned value. Customer has been waiting 42 seconds; she\'s Ultra tier and has 2 other active lines.',
+    nextActions: ['Verify PIN by SMS to alternate number', 'Re-submit port request', 'Waive activation fee as goodwill ($35)']
+  },
+  {
+    id: 'M-842288', type: 'SIM', customer: 'Marcus Webb', summary: 'SIM swap — ID verification kicked out',
+    wait: '1:14', status: 'urgent', channel: 'phone', tier: 'Plus', msisdn: '+1-512-555-0188', accountId: 'AC-81140',
+    description: 'Video selfie ID verification failed match confidence threshold (0.74, need 0.85). Requires human review before SIM swap proceeds.',
+    aiSummary: 'Document is valid. Face match is borderline — likely due to heavy beard grown since ID photo. Account activity is consistent (same device, location, typical usage pattern). Recommend: approve swap.',
+    nextActions: ['Approve SIM swap with override', 'Request fresh document upload', 'Escalate to fraud team']
+  },
+  {
+    id: 'M-842275', type: 'UPG', customer: 'Jing Liu', summary: 'Trade-in value dispute for Nova Pro 14',
+    wait: '2:03', status: 'urgent', channel: 'chat', tier: 'Plus', msisdn: '+1-917-555-0203', accountId: 'AC-72018',
+    description: 'Customer quoted $640 trade-in online, inspection agent assessed $480 due to screen scuff. Customer refuses upgrade unless original quote honored.',
+    aiSummary: 'Scuff visible in submitted photos but within "Good" condition tier by our policy. Customer is 6-year loyal, zero prior disputes. Authorization to match original $640 available up to $200 variance per retention policy.',
+    nextActions: ['Honor original $640 quote', 'Offer $520 compromise + $50 accessory credit', 'Decline and explain policy']
+  },
+  {
+    id: 'M-842260', type: 'ACT', customer: 'Priya Desai', summary: 'New activation — credit check returned Tier 3',
+    wait: '3:22', status: 'normal', channel: 'web', tier: 'Essential', msisdn: '+1-646-555-0119', accountId: 'AC-88721',
+    description: 'Prospective customer failed automated credit check. System offered prepaid alternative. Customer requested agent review.',
+    aiSummary: 'Credit flag is due to thin file (new to country, 8 months). Employment verified. Recommend: offer $200 deposit alternative path to postpaid, or prepaid Ultra at promotional rate.',
+    nextActions: ['Offer postpaid with $200 deposit', 'Offer prepaid Ultra at promo', 'Decline — standard process']
+  },
+  {
+    id: 'M-842254', type: 'BILL', customer: 'Theo Martín', summary: 'Roaming charges dispute — Switzerland $612',
+    wait: '4:10', status: 'normal', channel: 'phone', tier: 'Ultra', msisdn: '+1-305-555-0177', accountId: 'AC-55032',
+    description: 'Customer claims roaming auto-enablement was not clear. Charges accrued over 4 days of travel.',
+    aiSummary: 'Account is Ultra which includes unlimited global roaming in 120+ countries. Switzerland IS included. These charges should not have accrued. System bug suspected.',
+    nextActions: ['Full refund + $50 credit (system error)', 'Escalate to billing engineering', 'Standard goodwill credit']
+  },
+  {
+    id: 'M-842243', type: 'PLAN', customer: 'Olu Adeyemi', summary: 'Downgrading from Ultra → Plus, retention',
+    wait: '5:48', status: 'normal', channel: 'chat', tier: 'Ultra', msisdn: '+1-832-555-0144', accountId: 'AC-40112',
+    description: 'Customer initiated plan downgrade to save $30/mo. Autonomous flow completed; offering retention pathway.',
+    aiSummary: 'Uses 45 GB/mo on average — Plus (50 GB premium) fits well. Low churn risk. Retention offer: keep Ultra at Plus price for 6 months.',
+    nextActions: ['Offer 6-month Ultra at Plus price', 'Confirm downgrade', 'Offer loyalty credit $100']
+  },
+  {
+    id: 'M-842231', type: 'PORT', customer: 'Eira Nilsen', summary: 'Port-in completed, SMS not receiving',
+    wait: '8:12', status: 'normal', channel: 'web', tier: 'Plus', msisdn: '+1-720-555-0190', accountId: 'AC-66340',
+    description: 'Number ported successfully 20 min ago. Customer can make/receive calls and data works, but incoming SMS silent.',
+    aiSummary: 'SMSC routing entry not yet propagated — typical 15–30 min delay post-port. System will auto-resolve. Customer needs reassurance + ETA.',
+    nextActions: ['Inform customer — normal, ETA 15 min', 'Force SMSC refresh', 'Issue test SMS']
+  },
+  {
+    id: 'M-842219', type: 'UPG', customer: 'Fumiko Tanaka', summary: 'Family upgrade: 4 lines, device eligibility check',
+    wait: '10:33', status: 'normal', channel: 'web', tier: 'Plus', msisdn: '+1-415-555-0166', accountId: 'AC-11287',
+    description: 'Bulk family upgrade for 4 lines. Line 3 not eligible (in-contract until Jan 2027, $340 ETF).',
+    aiSummary: 'Offer ETF waiver on line 3 in exchange for 3-year loyalty agreement on all 4 lines. Net positive LTV.',
+    nextActions: ['Offer ETF waiver + 3-yr agreement', 'Proceed with 3 eligible lines', 'Calculate buyout alternatives']
+  },
+  {
+    id: 'M-842203', type: 'SIM', customer: 'Rashid Patel', summary: 'eSIM transfer to new device (Nova Fold)',
+    wait: '14:02', status: 'callback', channel: 'callback', tier: 'Ultra', msisdn: '+1-408-555-0122', accountId: 'AC-30055',
+    description: 'Scheduled callback — customer received new Nova Fold, wants eSIM transferred before 5pm today.',
+    aiSummary: 'Straightforward eSIM transfer. Customer verified. Can be completed in 3 minutes.',
+    nextActions: ['Initiate eSIM transfer', 'Confirm timing preference', 'Send QR code']
+  },
+  {
+    id: 'M-842190', type: 'ACT', customer: 'Saoirse Kelly', summary: 'Business account — 12 lines provisioning',
+    wait: '18:44', status: 'callback', channel: 'callback', tier: 'Business', msisdn: '+1-617-555-0133', accountId: 'AC-95500',
+    description: 'SMB activation of 12 lines. Requires tax-exempt status verification and pooled-data config.',
+    aiSummary: 'Tax certificate on file, verified 3 days ago. Pooled data plan configured. Ready to execute.',
+    nextActions: ['Execute bulk provisioning', 'Confirm billing contact', 'Schedule onboarding call']
+  },
+  {
+    id: 'M-842178', type: 'BILL', customer: 'Kwame Asante', summary: 'Auto-pay failed — card expired',
+    wait: '22:10', status: 'callback', channel: 'callback', tier: 'Plus', msisdn: '+1-404-555-0101', accountId: 'AC-22003',
+    description: 'Payment failed 2 days ago. Service still active (3-day grace). Callback to update payment method.',
+    aiSummary: 'Solid payment history (48 consecutive on-time). Low-friction ask.',
+    nextActions: ['Take payment over phone (PCI flow)', 'Send secure link', 'Offer different payment method']
+  },
+  {
+    id: 'M-842165', type: 'PLAN', customer: 'Helena Voss', summary: 'Asking about 5G home internet availability',
+    wait: '24:55', status: 'callback', channel: 'callback', tier: 'Essential', msisdn: '+1-206-555-0188', accountId: 'AC-18844',
+    description: 'Inquiry about Fiber availability at new home address. Currently on Essential mobile.',
+    aiSummary: 'Address not yet in fiber footprint. 5G Home Internet available — 300 Mbps estimated. Bundling discount possible.',
+    nextActions: ['Propose 5G Home Internet + Plus bundle', 'Add to fiber expansion wait list', 'Schedule follow-up']
+  }
+];
+
+/* ---------- Customer 360 data (keyed by queue item ID) ---------- */
+const customerDetail = {
+  'M-842301': {
+    customer: { name: 'Ananya Rao', email: 'ananya.r@example.com', accountId: 'AC-99812', since: '2019-03-14', tier: 'Ultra', lifetimeValue: 8420, nps: 9, riskScore: 'Low', preferredChannel: 'Chat' },
+    address: { line: '428 Lemmon Ave', city: 'Dallas, TX 75219', type: 'Primary' },
+    lines: [
+      { msisdn: '+1-214-555-0101', plan: 'Ultra', status: 'Active', device: 'Aurora Nova Pro 14', imei: '35-917852-461923-4', simType: 'eSIM', portStatus: 'Pending' },
+      { msisdn: '+1-214-555-0102', plan: 'Plus', status: 'Active', device: 'Kestrel Falcon X1', imei: '35-772144-118902-1', simType: 'Physical', portStatus: '—' },
+      { msisdn: '+1-214-555-0103', plan: 'Essential', status: 'Active', device: 'Prism 6', imei: '35-448123-991005-8', simType: 'eSIM', portStatus: '—' }
+    ],
+    billing: { method: 'Visa •• 4412', autoPay: true, balance: 0, nextBill: '2026-05-01', lastPayment: '$174.32 on 2026-04-01' },
+    usage: [
+      { label: 'Data (primary line)', used: 42, total: 100, unit: 'GB', health: 'ok' },
+      { label: 'Talk minutes', used: 188, total: 'Unlimited', health: 'ok', pct: 10 },
+      { label: 'Hotspot', used: 8, total: 15, unit: 'GB', health: 'warn' }
+    ],
+    timeline: [
+      { status: 'active', time: '−00:42', title: 'Port request suspended', desc: 'Third retry failed with <code>PIN_MISMATCH</code>. Manual review required.' },
+      { status: 'err', time: '−01:22', title: 'Port attempt #3', desc: 'Pega case <code>M-842301</code> · Donor carrier returned <code>REJ_PIN_001</code>' },
+      { status: 'err', time: '−02:10', title: 'Port attempt #2', desc: 'Autonomous retry with same PIN value.' },
+      { status: 'err', time: '−03:05', title: 'Port attempt #1', desc: 'Customer submitted PIN via web form.' },
+      { status: 'ok', time: '−04:50', title: 'Eligibility check passed', desc: 'Donor carrier: Verizon. Number portable. ETA 8 min.' },
+      { status: 'ok', time: '−08:12', title: 'Port-in case created', desc: 'Web channel · Case type <code>iConnecTelco-PORT-IN</code>' }
+    ],
+    recent: [
+      { date: '2026-04-18', action: 'Plan change', detail: 'Plus → Ultra (auto)', status: 'Completed' },
+      { date: '2026-03-22', action: 'Device purchase', detail: 'Aurora Nova Pro 14 (financed)', status: 'Completed' },
+      { date: '2026-02-14', action: 'Support contact', detail: 'Billing query — resolved', status: 'Closed' },
+      { date: '2025-11-03', action: 'Line added', detail: 'Line 3 activation', status: 'Completed' }
+    ]
+  }
+};
+// Fallback stub for other queue items
+function ensureCustomerDetail(id) {
+  if (customerDetail[id]) return customerDetail[id];
+  const q = queueData.find(x => x.id === id);
+  if (!q) return null;
+  customerDetail[id] = {
+    customer: { name: q.customer, email: q.customer.toLowerCase().replace(/\s+/g,'.') + '@example.com', accountId: q.accountId, since: '2022-06-10', tier: q.tier, lifetimeValue: 2400 + Math.floor(Math.random()*5000), nps: 7 + Math.floor(Math.random()*3), riskScore: 'Low', preferredChannel: q.channel.charAt(0).toUpperCase() + q.channel.slice(1) },
+    address: { line: '—', city: '—', type: 'Primary' },
+    lines: [{ msisdn: q.msisdn, plan: q.tier, status: 'Active', device: 'Prism 7', imei: '35-000000-000000-0', simType: 'eSIM', portStatus: q.type === 'PORT' ? 'In progress' : '—' }],
+    billing: { method: 'Visa •• 0000', autoPay: true, balance: 0, nextBill: '2026-05-01', lastPayment: '$45.00 on 2026-04-01' },
+    usage: [
+      { label: 'Data', used: Math.floor(Math.random()*40)+5, total: 50, unit: 'GB', health: 'ok' },
+      { label: 'Talk', used: Math.floor(Math.random()*200), total: 'Unlimited', health: 'ok', pct: 5 }
+    ],
+    timeline: [
+      { status: 'active', time: '−' + q.wait, title: 'Case assigned to agent', desc: q.description },
+      { status: 'warn', time: '−' + (parseInt(q.wait) + 1) + ':00', title: 'Autonomous recovery attempted', desc: 'System attempted auto-resolution and handed off.' },
+      { status: 'ok', time: '−' + (parseInt(q.wait) + 2) + ':30', title: 'Case created', desc: q.channel + ' channel' }
+    ],
+    recent: [
+      { date: '2026-03-15', action: 'Plan change', detail: 'Various', status: 'Completed' },
+      { date: '2026-01-22', action: 'Device upgrade', detail: 'Trade-in completed', status: 'Completed' }
+    ]
+  };
+  return customerDetail[id];
+}
+
+/* ---------- Render queue ---------- */
+let activeCaseId = null;
+let activeQueueFilter = 'all';
+
+function renderQueue() {
+  const list = document.getElementById('queueList');
+  const filtered = queueData.filter(q => {
+    if (activeQueueFilter === 'all') return true;
+    if (activeQueueFilter === 'urgent') return q.status === 'urgent';
+    if (activeQueueFilter === 'escalated') return q.status === 'urgent' && parseInt(q.wait) < 1;
+    if (activeQueueFilter === 'callback') return q.status === 'callback';
+    return true;
+  });
+
+  list.innerHTML = filtered.map(q => {
+    const waitClass = q.status === 'urgent' ? 'err' : (parseInt(q.wait) > 5 ? 'warn' : '');
+    return `
+      <div class="queue-item ${q.status === 'urgent' ? 'urgent' : ''} ${activeCaseId === q.id ? 'active' : ''}"
+           onclick="loadCase('${q.id}')" data-id="${q.id}">
+        <div class="qi-row1">
+          <span class="qi-type ${q.type.toLowerCase()}">${q.type}</span>
+          <span class="qi-wait ${waitClass}">${q.wait}</span>
+        </div>
+        <div class="qi-customer">${q.customer}</div>
+        <div class="qi-summary">${q.summary}</div>
+        <div class="qi-meta">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${q.channel}</span>
+          <span>${q.msisdn}</span>
+          <span>${q.tier}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ---------- Load case into workspace ---------- */
+function loadCase(id) {
+  activeCaseId = id;
+  const q = queueData.find(x => x.id === id);
+  const detail = ensureCustomerDetail(id);
+  if (!q || !detail) return;
+
+  renderQueue(); // re-render to show active
+
+  const ws = document.getElementById('workspace');
+  ws.innerHTML = `
+    <div class="ws-header">
+      <div>
+        <div class="ws-title-row">
+          <span class="ws-case-id">${q.id}</span>
+          <span class="ws-customer-name">${detail.customer.name}</span>
+          <span class="ws-status-chip">${q.type} · Suspended</span>
+        </div>
+        <div class="ws-meta-row">
+          <span><strong>Acct</strong>${detail.customer.accountId}</span>
+          <span><strong>Tier</strong>${detail.customer.tier}</span>
+          <span><strong>Since</strong>${detail.customer.since}</span>
+          <span><strong>NPS</strong>${detail.customer.nps}/10</span>
+          <span><strong>LTV</strong>$${detail.customer.lifetimeValue.toLocaleString()}</span>
+          <span><strong>Risk</strong>${detail.customer.riskScore}</span>
+        </div>
+      </div>
+      <div class="ws-header-actions">
+        <button class="act-btn" onclick="copilotAction('summarise')">Summarise</button>
+        <button class="act-btn" onclick="callCustomer()">Call</button>
+        <button class="act-btn" onclick="transferCase()">Transfer</button>
+        <button class="act-btn primary" onclick="resolveCase()">Resolve</button>
+        <button class="act-btn danger" onclick="escalate()">Escalate</button>
+      </div>
+    </div>
+
+    <div class="ws-grid">
+      <!-- Customer identity -->
+      <div class="ws-card">
+        <div class="card-head">
+          <span class="card-title">Identity</span>
+          <a class="card-link">Open full profile →</a>
+        </div>
+        <div class="fv-row"><span class="fv-label">Email</span><span class="fv-val mono">${detail.customer.email}</span></div>
+        <div class="fv-row"><span class="fv-label">Primary</span><span class="fv-val mono">${q.msisdn}</span></div>
+        <div class="fv-row"><span class="fv-label">Address</span><span class="fv-val">${detail.address.line}, ${detail.address.city}</span></div>
+        <div class="fv-row"><span class="fv-label">Channel</span><span class="fv-val">${detail.customer.preferredChannel}</span></div>
+        <div class="fv-row"><span class="fv-label">Lang</span><span class="fv-val">English (US)</span></div>
+      </div>
+
+      <!-- Billing -->
+      <div class="ws-card">
+        <div class="card-head">
+          <span class="card-title">Billing</span>
+          <a class="card-link">Payment methods →</a>
+        </div>
+        <div class="fv-row"><span class="fv-label">Method</span><span class="fv-val mono">${detail.billing.method}</span></div>
+        <div class="fv-row"><span class="fv-label">Auto-pay</span><span class="fv-val ${detail.billing.autoPay ? 'ok' : 'warn'}">${detail.billing.autoPay ? 'Enabled' : 'Disabled'}</span></div>
+        <div class="fv-row"><span class="fv-label">Balance</span><span class="fv-val mono">$${detail.billing.balance.toFixed(2)}</span></div>
+        <div class="fv-row"><span class="fv-label">Next bill</span><span class="fv-val mono">${detail.billing.nextBill}</span></div>
+        <div class="fv-row"><span class="fv-label">Last pmt</span><span class="fv-val">${detail.billing.lastPayment}</span></div>
+      </div>
+
+      <!-- Usage -->
+      <div class="ws-card">
+        <div class="card-head">
+          <span class="card-title">Usage · current cycle</span>
+          <a class="card-link">Detail →</a>
+        </div>
+        ${detail.usage.map(u => {
+          const pct = u.total === 'Unlimited' ? (u.pct || 5) : Math.round((u.used / u.total) * 100);
+          return `
+            <div class="usage-bar">
+              <div class="usage-top">
+                <span>${u.label}</span>
+                <span>${u.used}${u.unit ? ' ' + u.unit : ''} / ${u.total}${typeof u.total === 'number' && u.unit ? ' ' + u.unit : ''}</span>
+              </div>
+              <div class="usage-track"><div class="usage-fill ${u.health}" style="width:${pct}%"></div></div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Lines table (spans 2 cols) -->
+      <div class="ws-card span2">
+        <div class="card-head">
+          <span class="card-title">Lines on account · ${detail.lines.length}</span>
+          <a class="card-link">Add line →</a>
+        </div>
+        <table class="ws-table">
+          <thead>
+            <tr>
+              <th>Number</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>Device</th>
+              <th>SIM</th>
+              <th>IMEI</th>
+              <th>Port</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${detail.lines.map(l => `
+              <tr>
+                <td class="mono">${l.msisdn}</td>
+                <td>${l.plan}</td>
+                <td><span class="row-status" style="background:${l.status === 'Active' ? 'var(--ok)' : 'var(--warn)'}"></span>${l.status}</td>
+                <td>${l.device}</td>
+                <td>${l.simType}</td>
+                <td class="mono">${l.imei}</td>
+                <td>${l.portStatus === 'Pending' ? '<span style="color:var(--warn)">● Pending</span>' : l.portStatus}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="ws-card">
+        <div class="card-head">
+          <span class="card-title">Quick actions</span>
+        </div>
+        <div class="qa-grid">
+          <button class="qa-card" onclick="performAction('sim_swap')">
+            <span class="qa-icon">◇</span>
+            <span class="qa-title">SIM swap</span>
+            <span class="qa-sub">~3 min</span>
+          </button>
+          <button class="qa-card" onclick="performAction('plan_change')">
+            <span class="qa-icon">≋</span>
+            <span class="qa-title">Plan change</span>
+            <span class="qa-sub">Instant</span>
+          </button>
+          <button class="qa-card" onclick="performAction('credit')">
+            <span class="qa-icon">$</span>
+            <span class="qa-title">Issue credit</span>
+            <span class="qa-sub">Up to $150</span>
+          </button>
+          <button class="qa-card" onclick="performAction('port_retry')">
+            <span class="qa-icon">↔</span>
+            <span class="qa-title">Retry port</span>
+            <span class="qa-sub">Suggested</span>
+          </button>
+          <button class="qa-card" onclick="performAction('send_sms')">
+            <span class="qa-icon">✉</span>
+            <span class="qa-title">Send SMS</span>
+            <span class="qa-sub">Templates</span>
+          </button>
+          <button class="qa-card" onclick="performAction('send_email')">
+            <span class="qa-icon">@</span>
+            <span class="qa-title">Send email</span>
+            <span class="qa-sub">Templates</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Timeline (spans 2 cols) -->
+      <div class="ws-card span2">
+        <div class="card-head">
+          <span class="card-title">Case timeline</span>
+          <a class="card-link">Full audit →</a>
+        </div>
+        <ul class="timeline">
+          ${detail.timeline.map(t => `
+            <li class="${t.status}">
+              <div class="tl-head">
+                <span class="tl-title">${t.title}</span>
+                <span class="tl-time">${t.time}</span>
+              </div>
+              <div class="tl-desc">${t.desc}</div>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="ws-card">
+        <div class="card-head">
+          <span class="card-title">Recent activity</span>
+        </div>
+        <table class="ws-table">
+          <thead><tr><th>Date</th><th>Action</th><th>Detail</th></tr></thead>
+          <tbody>
+            ${detail.recent.map(r => `
+              <tr>
+                <td class="mono">${r.date}</td>
+                <td>${r.action}</td>
+                <td>${r.detail}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // Auto-activate copilot with context
+  populateCopilot(q);
+}
+
+/* ---------- Copilot ---------- */
+function populateCopilot(q) {
+  const body = document.getElementById('copilotBody');
+  body.innerHTML = `
+    <div class="copilot-msg">
+      <div class="copilot-label">Case summary</div>
+      <p>${q.description}</p>
+    </div>
+    <div class="copilot-msg agent">
+      <div class="copilot-label">AI analysis</div>
+      <p>${q.aiSummary}</p>
+    </div>
+    <div class="copilot-msg">
+      <div class="copilot-label">Suggested next actions</div>
+      <ul>
+        ${q.nextActions.map(a => `<li>${a}</li>`).join('')}
+      </ul>
+    </div>
+  `;
+  body.scrollTop = body.scrollHeight;
+}
+
+function copilotAction(kind) {
+  if (!activeCaseId) {
+    toast('Select a case first');
+    return;
+  }
+  const q = queueData.find(x => x.id === activeCaseId);
+  const body = document.getElementById('copilotBody');
+  const messages = {
+    summarise: `<strong>Summary:</strong> ${q.aiSummary}`,
+    draft: `<strong>Drafted response:</strong><br/><em>"Hi ${q.customer.split(' ')[0]}, I've reviewed your case. ${q.aiSummary.split('.')[1] ? q.aiSummary.split('.')[1].trim() + '.' : ''} I'll take care of this right now."</em>`,
+    next: `<strong>Next best action:</strong> ${q.nextActions[0]}<br/><em>Alternate paths:</em><ul>${q.nextActions.slice(1).map(a => `<li>${a}</li>`).join('')}</ul>`
+  };
+  body.insertAdjacentHTML('beforeend', `
+    <div class="copilot-msg agent">
+      <div class="copilot-label">${kind}</div>
+      <p>${messages[kind]}</p>
+    </div>
+  `);
+  body.scrollTop = body.scrollHeight;
+}
+
+function copilotKey(e) {
+  if (e.key === 'Enter') {
+    const val = e.target.value.trim();
+    if (!val) return;
+    const body = document.getElementById('copilotBody');
+    body.insertAdjacentHTML('beforeend', `
+      <div class="copilot-msg">
+        <div class="copilot-label">You</div>
+        <p>${val}</p>
+      </div>
+      <div class="copilot-msg agent">
+        <div class="copilot-label">Copilot</div>
+        <p>Here's my suggestion based on the active case. This is a scripted demo — in production this would call your LLM provider with case context, customer history, and policy guardrails.</p>
+      </div>
+    `);
+    e.target.value = '';
+    body.scrollTop = body.scrollHeight;
+  }
+}
+
+/* ---------- Case actions ---------- */
+async function performAction(kind) {
+  if (!activeCaseId) return toast('Select a case first');
+  toast(`Executing: ${kind.replace('_',' ')}…`);
+
+  try {
+    const resp = await fetch('/api/pega-case', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        caseType: 'iConnecTelco-CSR-' + kind.toUpperCase(),
+        flowKey: kind,
+        content: { parentCase: activeCaseId, agentId: 'sk@iconnectelco.com' }
+      })
+    });
+    const result = await resp.json();
+    setTimeout(() => toast(`${kind.replace('_',' ')} → ${result.caseID || 'complete'}`), 800);
+  } catch {
+    setTimeout(() => toast(`${kind.replace('_',' ')} queued (offline)`), 800);
+  }
+}
+
+function resolveCase() {
+  if (!activeCaseId) return;
+  toast(`Case ${activeCaseId} resolved`);
+  const idx = queueData.findIndex(q => q.id === activeCaseId);
+  if (idx > -1) queueData.splice(idx, 1);
+  activeCaseId = null;
+  renderQueue();
+  document.getElementById('workspace').innerHTML = `
+    <div class="ws-empty">
+      <div class="ws-empty-mark"><svg width="60" height="60" viewBox="0 0 80 80" style="opacity:0.4"><rect x="16" y="34" width="5" height="6" rx="1" fill="currentColor"/><rect x="25" y="30" width="5" height="10" rx="1" fill="currentColor"/><rect x="34" y="26" width="5" height="14" rx="1" fill="currentColor"/><rect x="42.5" y="10" width="5" height="62" rx="1" fill="#f97316"/><rect x="51" y="26" width="5" height="14" rx="1" fill="currentColor"/><rect x="60" y="30" width="5" height="10" rx="1" fill="currentColor"/><rect x="69" y="34" width="5" height="6" rx="1" fill="currentColor"/><rect x="12" y="40" width="66" height="5" rx="1" fill="currentColor"/></svg></div>
+      <h3>Case resolved</h3>
+      <p>Pick the next case from the queue.</p>
+    </div>
+  `;
+  document.getElementById('copilotBody').innerHTML = `
+    <div class="copilot-msg system">
+      <div class="copilot-label">Ready</div>
+      <p>Standing by for next case.</p>
+    </div>
+  `;
+}
+
+function escalate() {
+  if (!activeCaseId) return;
+  toast(`${activeCaseId} escalated to Tier 2`);
+}
+function callCustomer() { toast('Dialing customer…'); }
+function transferCase() { toast('Select destination queue'); }
+
+/* ---------- Queue filters ---------- */
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-queue]')) {
+    const btn = e.target.closest('[data-queue]');
+    document.querySelectorAll('[data-queue]').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    activeQueueFilter = btn.dataset.queue;
+    renderQueue();
+  }
+});
+
+function refreshQueue() {
+  renderQueue();
+  toast('Queue refreshed');
+}
+
+/* ---------- Agent status toggle ---------- */
+function toggleStatus() {
+  const pill = document.getElementById('agentStatus');
+  const label = document.getElementById('statusLabel');
+  if (pill.classList.contains('available')) {
+    pill.classList.remove('available'); pill.classList.add('away'); label.textContent = 'Away';
+  } else if (pill.classList.contains('away')) {
+    pill.classList.remove('away'); pill.classList.add('busy'); label.textContent = 'Busy';
+  } else {
+    pill.classList.remove('busy'); pill.classList.add('available'); label.textContent = 'Available';
+  }
+}
+
+/* ---------- Command palette ---------- */
+const paletteCorpus = [
+  ...queueData.map(q => ({ kind: 'Case', type: q.type, title: `${q.id} · ${q.customer}`, meta: q.summary, action: () => loadCase(q.id) })),
+  ...queueData.map(q => ({ kind: 'Customer', type: 'CUST', title: q.customer, meta: `${q.accountId} · ${q.msisdn}`, action: () => loadCase(q.id) })),
+  ...queueData.map(q => ({ kind: 'Number', type: 'MSISDN', title: q.msisdn, meta: `${q.customer} · ${q.tier}`, action: () => loadCase(q.id) })),
+  { kind: 'Action', type: 'GO', title: 'Go to queue', meta: 'All open interactions', action: () => { closePalette(); document.querySelector('[data-view="queue"]').click(); } },
+  { kind: 'Action', type: 'GO', title: 'Knowledge base', meta: 'Search policies & scripts', action: () => toast('Knowledge base coming soon') },
+  { kind: 'Action', type: 'GO', title: 'Go offline (wrap-up)', meta: 'Pause queue', action: () => { closePalette(); toggleStatus(); } },
+  { kind: 'Knowledge', type: 'KB', title: 'Port-in troubleshooting', meta: 'KB-0471 · PIN mismatches, SPID errors', action: () => toast('Opening KB-0471') },
+  { kind: 'Knowledge', type: 'KB', title: 'SIM swap policy (fraud prevention)', meta: 'KB-0309 · ID verification tiers', action: () => toast('Opening KB-0309') },
+  { kind: 'Knowledge', type: 'KB', title: 'Credit limits & waivers', meta: 'KB-0112 · Authority matrix by tenure', action: () => toast('Opening KB-0112') }
+];
+
+let paletteSelected = 0;
+let paletteFiltered = [];
+
+function openPalette() {
+  document.getElementById('paletteOverlay').classList.add('open');
+  const input = document.getElementById('paletteInput');
+  input.value = '';
+  input.focus();
+  paletteSearch('');
+}
+function closePalette(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('paletteOverlay').classList.remove('open');
+}
+function paletteSearch(q) {
+  q = q.toLowerCase().trim();
+  paletteFiltered = q
+    ? paletteCorpus.filter(x => (x.title + ' ' + x.meta).toLowerCase().includes(q))
+    : paletteCorpus.slice(0, 12);
+  paletteSelected = 0;
+  renderPaletteResults();
+}
+function renderPaletteResults() {
+  const out = document.getElementById('paletteResults');
+  if (!paletteFiltered.length) {
+    out.innerHTML = '<div style="padding:24px; text-align:center; color:var(--ink-3); font-size:12px;">No matches</div>';
+    return;
+  }
+  const grouped = {};
+  paletteFiltered.slice(0, 20).forEach((x, i) => {
+    if (!grouped[x.kind]) grouped[x.kind] = [];
+    grouped[x.kind].push({ ...x, _idx: i });
+  });
+  out.innerHTML = Object.entries(grouped).map(([kind, items]) => `
+    <div class="palette-group-title">${kind}</div>
+    ${items.map(x => `
+      <div class="palette-item ${x._idx === paletteSelected ? 'selected' : ''}" data-idx="${x._idx}" onclick="runPalette(${x._idx})">
+        <span class="palette-item-icon">${x.type.charAt(0)}</span>
+        <div class="palette-item-body">
+          <div class="palette-item-title">${x.title}</div>
+          <div class="palette-item-meta">${x.meta}</div>
+        </div>
+        <span class="palette-item-type">${x.type}</span>
+      </div>
+    `).join('')}
+  `).join('');
+}
+function runPalette(idx) {
+  const item = paletteFiltered[idx];
+  if (item) { closePalette(); item.action(); }
+}
+
+document.getElementById('paletteInput').addEventListener('input', (e) => paletteSearch(e.target.value));
+document.getElementById('paletteInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePalette({ target: document.getElementById('paletteOverlay'), currentTarget: document.getElementById('paletteOverlay') });
+  if (e.key === 'ArrowDown') { e.preventDefault(); paletteSelected = Math.min(paletteSelected + 1, paletteFiltered.length - 1); renderPaletteResults(); }
+  if (e.key === 'ArrowUp') { e.preventDefault(); paletteSelected = Math.max(paletteSelected - 1, 0); renderPaletteResults(); }
+  if (e.key === 'Enter') { runPalette(paletteSelected); }
+});
+
+/* ---------- Global keyboard shortcuts ---------- */
+document.addEventListener('keydown', (e) => {
+  // ⌘K / Ctrl+K — command palette
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    openPalette();
+  }
+  // Escape — close palette
+  if (e.key === 'Escape') {
+    document.getElementById('paletteOverlay').classList.remove('open');
+  }
+  // Number keys for rail nav (when not in an input)
+  if (!e.target.matches('input, textarea') && /^[1-4]$/.test(e.key)) {
+    document.querySelectorAll('.rail-btn[data-view]')[parseInt(e.key) - 1]?.click();
+  }
+  // W — wrap-up (demo)
+  if (!e.target.matches('input, textarea') && e.key.toLowerCase() === 'w' && !e.metaKey && !e.ctrlKey) {
+    if (activeCaseId) resolveCase();
+  }
+});
+
+/* ---------- Clock ---------- */
+function tickClock() {
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  const ss = String(d.getSeconds()).padStart(2, '0');
+  const el = document.getElementById('clock');
+  if (el) el.textContent = `${hh}:${mm}:${ss}`;
+}
+setInterval(tickClock, 1000);
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ---------- Init ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  renderQueue();
+  tickClock();
+  // Auto-load first urgent case to demo the 360
+  setTimeout(() => loadCase('M-842301'), 300);
+});
+
+</script>
+<div class="demo-badge">DEMO MODE · simulated API <a href="../index.html">← switch app</a></div>
+</body>
+</html>

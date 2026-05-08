@@ -1,0 +1,3176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>iConnecTelco · Customer Portal (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Source+Serif+4:opsz,wght@8..60,400..700&family=JetBrains+Mono:wght@400;500;700&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #14110f; --ink-soft: #2b2522;
+  --paper: #f4efe6; --paper-2: #ebe4d6; --paper-3: #e0d7c4;
+  --line: #1411101a; --line-strong: #14111033;
+  --accent: #c2410c; --accent-deep: #7c2d12; --accent-soft: #fed7aa;
+  --mint: #3f6b52; --blush: #b45378; --muted: #6b5f54;
+  --ff-display: 'Fraunces', Georgia, serif;
+  --ff-accent: 'Source Serif 4', 'Fraunces', Georgia, serif;
+  --ff-body: 'Figtree', system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --shadow-m: 0 4px 18px rgba(20,17,16,0.08), 0 18px 60px rgba(20,17,16,0.06);
+  --shadow-l: 0 20px 60px rgba(20,17,16,0.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff-body);color:var(--ink);background:var(--paper);font-size:16px;line-height:1.55;letter-spacing:-0.005em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0.04;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+em{font-style:normal;font-family:var(--ff-accent);font-weight:500}
+
+/* Header */
+.site-header{position:sticky;top:0;z-index:100;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:48px;padding:16px 48px;background:rgba(244,239,230,0.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-name{font-family:var(--ff-display);font-weight:500;font-size:22px;letter-spacing:-0.02em;line-height:1}
+.brand-name em{color:var(--accent);font-style:italic;font-family:var(--ff-display);font-weight:400}
+.brand-name .t-accent{color:var(--accent)}
+.primary-nav{display:flex;gap:34px;justify-content:center}
+.primary-nav a{font-size:14px;font-weight:500;color:var(--ink-soft);position:relative;padding:6px 0;transition:color .25s var(--ease)}
+.primary-nav a::after{content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--accent);transition:width .3s var(--ease)}
+.primary-nav a:hover{color:var(--accent)}
+.primary-nav a:hover::after{width:100%}
+.header-actions{display:flex;align-items:center;gap:10px}
+.icon-btn{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;color:var(--ink);transition:background .2s var(--ease);position:relative}
+.icon-btn:hover{background:var(--paper-2)}
+.cart-badge{position:absolute;top:2px;right:2px;min-width:16px;height:16px;padding:0 4px;background:var(--accent);color:#fff;font-family:var(--ff-mono);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:10px}
+.btn-pill{padding:9px 18px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:13px;font-weight:500;transition:transform .2s var(--ease),background .2s var(--ease)}
+.btn-pill:hover{background:var(--accent);transform:translateY(-1px)}
+
+/* Hero */
+.hero{padding:32px 48px 0;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:20%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(194,65,12,0.15) 0%,transparent 60%);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:80px;max-width:1400px;margin:0 auto;align-items:center;min-height:60vh;padding:24px 0}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--ff-mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-soft);margin-bottom:24px}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.3)}}
+.hero-title{font-family:var(--ff-display);font-weight:350;font-size:clamp(40px,5.4vw,76px);line-height:0.97;letter-spacing:-0.035em;margin-bottom:20px}
+.hero-title em{color:var(--accent);font-weight:400;font-style:normal}
+.hero-lede{font-size:17px;line-height:1.55;max-width:480px;color:var(--ink-soft);margin-bottom:28px}
+.hero-cta{display:flex;gap:14px;margin-bottom:32px;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:16px 28px;background:var(--ink);color:var(--paper);border-radius:999px;font-size:14px;font-weight:500;transition:transform .25s var(--ease),background .25s var(--ease)}
+.btn-primary:hover{background:var(--accent);transform:translateY(-2px)}
+.btn-primary.wide{width:100%;justify-content:center;padding:18px}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:16px 28px;background:transparent;color:var(--ink);border:1px solid var(--line-strong);border-radius:999px;font-size:14px;font-weight:500;transition:all .25s var(--ease)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);max-width:460px;gap:32px;padding-top:28px;border-top:1px solid var(--line)}
+.hero-stats strong{display:block;font-family:var(--ff-display);font-size:28px;font-weight:500;letter-spacing:-0.02em;margin-bottom:4px}
+.hero-stats span{font-family:var(--ff-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted)}
+.hero-visual{position:relative;display:flex;align-items:center;justify-content:center;height:100%}
+
+/* Self-service inside hero right column */
+.hero-service{width:100%;max-width:420px}
+.hero-service-title{font-family:var(--ff-display);font-weight:400;font-size:clamp(24px,2.4vw,32px);letter-spacing:-0.02em;line-height:1.1;margin-bottom:24px;color:var(--ink)}
+.hero-service-title em{color:var(--accent);font-family:var(--ff-accent);font-weight:500;font-style:normal}
+.hero-service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.hero-service-tile{padding:22px 10px;background:var(--paper);text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;transition:background .25s var(--ease);cursor:pointer;border:none;font:inherit;color:inherit}
+.hero-service-tile:hover{background:var(--paper-2)}
+.hero-service-tile:hover .hero-service-icon{color:var(--accent);transform:scale(1.15) rotate(6deg)}
+.hero-service-icon{font-size:24px;color:var(--ink);transition:transform .3s var(--ease),color .3s var(--ease);line-height:1}
+.hero-service-label{font-family:var(--ff-display);font-size:13px;font-weight:500;letter-spacing:-0.01em;line-height:1.2;color:var(--ink)}
+.marquee{margin-top:60px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;background:var(--paper-2)}
+.marquee-track{display:flex;gap:48px;white-space:nowrap;animation:scroll 40s linear infinite;font-family:var(--ff-mono);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-soft)}
+.marquee-track span{flex-shrink:0}
+.marquee-track span:nth-child(even){color:var(--accent)}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* Section heads */
+.section-head{max-width:1400px;margin:0 auto 36px;padding:0 48px}
+.section-num{display:block;font-family:var(--ff-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted);margin-bottom:20px}
+.section-head h2{font-family:var(--ff-display);font-size:clamp(36px,4vw,64px);font-weight:350;letter-spacing:-0.03em;line-height:1.02;margin-bottom:20px;max-width:900px}
+.section-head h2 em{color:var(--accent)}
+.section-head p{font-size:17px;color:var(--ink-soft);max-width:580px;line-height:1.55}
+
+/* Quick actions */
+.quick-actions{padding:64px 0}
+.actions-grid{max-width:1400px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.action-card{padding:28px 28px;background:var(--paper);text-align:left;display:flex;flex-direction:column;align-items:flex-start;transition:background .3s var(--ease);min-height:180px}
+.action-card:hover{background:var(--paper-2)}
+.action-card:hover .action-icon{color:var(--accent);transform:scale(1.1) rotate(8deg)}
+.action-icon{font-size:28px;color:var(--ink);margin-bottom:16px;transition:transform .4s var(--ease),color .4s var(--ease)}
+.action-card h3{font-family:var(--ff-display);font-size:22px;font-weight:400;letter-spacing:-0.02em;margin-bottom:6px}
+.action-card p{font-size:13px;color:var(--ink-soft);margin-bottom:16px;flex:1;line-height:1.5}
+.action-link{font-family:var(--ff-mono);font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);font-weight:500}
+
+/* Catalog */
+.devices{padding:48px 0 80px;background:var(--paper-2)}
+.catalog-top{max-width:1400px;margin:0 auto 24px;padding:0 48px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.brand-pills{display:flex;gap:8px;flex-wrap:wrap}
+.brand-pill{padding:9px 18px;background:var(--paper);border:1px solid var(--line-strong);border-radius:999px;font-size:13px;font-weight:500;color:var(--ink);transition:all .2s var(--ease);white-space:nowrap}
+.brand-pill:hover{border-color:var(--ink);transform:translateY(-1px)}
+.brand-pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.catalog-count{display:flex;align-items:center;gap:24px;font-family:var(--ff-mono);font-size:12px;color:var(--ink-soft)}
+.sort-by{display:flex;align-items:center;gap:8px}
+.sort-by label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)}
+.sort-by select{background:transparent;border:none;border-bottom:1px solid var(--line-strong);font-family:var(--ff-body);font-size:13px;color:var(--ink);padding:4px 20px 4px 4px;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2314110f' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 4px center}
+.sort-by select:hover{border-bottom-color:var(--accent)}
+.catalog-layout{max-width:1400px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:240px 1fr;gap:40px;align-items:flex-start}
+.filter-rail{position:sticky;top:88px;max-height:calc(100vh - 120px);overflow-y:auto;padding-right:8px}
+.filter-rail::-webkit-scrollbar{width:4px}
+.filter-rail::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:2px}
+.filter-group{border-bottom:1px solid var(--line);padding:4px 0}
+.filter-head{width:100%;display:flex;justify-content:space-between;align-items:center;padding:18px 0;font-family:var(--ff-display);font-size:18px;font-weight:500;letter-spacing:-0.01em;color:var(--ink);text-align:left}
+.filter-head svg{transition:transform .25s var(--ease);color:var(--ink-soft)}
+.filter-group.collapsed .filter-head svg{transform:rotate(-90deg)}
+.filter-body{padding:0 0 18px;display:flex;flex-direction:column;gap:10px;max-height:260px;overflow-y:auto}
+.filter-group.collapsed .filter-body{max-height:0;padding:0;overflow:hidden}
+.filter-body label{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-soft);cursor:pointer;padding:2px 0;transition:color .15s var(--ease)}
+.filter-body label:hover{color:var(--ink)}
+.filter-body input[type="checkbox"],.filter-body input[type="radio"]{appearance:none;-webkit-appearance:none;width:16px;height:16px;border:1.5px solid var(--line-strong);background:var(--paper);border-radius:3px;cursor:pointer;position:relative;flex-shrink:0;transition:all .15s var(--ease)}
+.filter-body input[type="radio"]{border-radius:50%}
+.filter-body input[type="checkbox"]:checked,.filter-body input[type="radio"]:checked{background:var(--ink);border-color:var(--ink)}
+.filter-body input[type="checkbox"]:checked::after{content:'';position:absolute;left:4px;top:1px;width:5px;height:9px;border:solid var(--paper);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.filter-body input[type="radio"]:checked::after{content:'';position:absolute;left:3px;top:3px;width:7px;height:7px;border-radius:50%;background:var(--paper)}
+.filter-footer{padding:24px 0 8px;display:flex;flex-direction:column;gap:10px;position:sticky;bottom:0;background:linear-gradient(to bottom,transparent,var(--paper-2) 40%)}
+.link-btn{color:var(--ink-soft);font-size:13px;font-weight:500;padding:8px;text-align:center;text-decoration:underline;text-underline-offset:3px;transition:color .15s var(--ease)}
+.link-btn:hover{color:var(--accent)}
+.catalog-main{min-width:0}
+.compare-tray{position:sticky;top:88px;z-index:10;margin-bottom:20px;background:var(--ink);color:var(--paper);border-radius:14px;padding:14px 20px;box-shadow:var(--shadow-m);animation:slideDown .3s var(--ease)}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.compare-tray-inner{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.compare-label{font-family:var(--ff-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--paper-3)}
+.compare-items{display:flex;gap:8px;flex:1;flex-wrap:wrap}
+.compare-chip{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;background:#2b2522;border-radius:999px;font-size:12px}
+.compare-chip button{color:var(--paper-3);font-size:14px;padding:0}
+.compare-chip button:hover{color:var(--paper)}
+.compare-go{background:var(--accent) !important;padding:9px 18px !important}
+.compare-go:hover{background:#fb923c !important}
+.compare-tray .link-btn{color:var(--paper-3)}
+.compare-tray .link-btn:hover{color:var(--paper)}
+.device-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.device-card{background:var(--paper);border-radius:14px;overflow:hidden;transition:transform .4s var(--ease),box-shadow .4s var(--ease);position:relative;display:flex;flex-direction:column;border:1px solid transparent}
+.device-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-m);border-color:var(--line)}
+.device-card .badge{position:absolute;top:14px;left:14px;padding:4px 9px;background:var(--accent);color:#fff;font-family:var(--ff-mono);font-size:9px;text-transform:uppercase;letter-spacing:0.1em;border-radius:3px;z-index:2;font-weight:600}
+.device-card .badge.sale{background:var(--blush)}
+.device-card .badge.preorder{background:var(--mint)}
+.device-card .fav{position:absolute;top:14px;right:14px;width:32px;height:32px;background:rgba(244,239,230,0.8);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);z-index:2;transition:all .2s var(--ease)}
+.device-card .fav:hover,.device-card .fav.active{color:var(--accent);background:var(--paper);border-color:var(--accent-soft)}
+.device-card .fav.active svg{fill:var(--accent)}
+.device-image{aspect-ratio:1;background:linear-gradient(145deg,var(--paper) 0%,var(--paper-2) 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:24px;cursor:pointer}
+.device-image::before{content:'';position:absolute;top:50%;left:50%;width:140%;height:140%;background:radial-gradient(circle at center,rgba(194,65,12,0.05) 0%,transparent 60%);transform:translate(-50%,-50%);z-index:0}
+.device-image img{max-width:72%;max-height:100%;object-fit:contain;position:relative;z-index:1;transition:transform .5s var(--ease);filter:drop-shadow(0 12px 20px rgba(20,17,16,0.15))}
+.device-card:hover .device-image img{transform:scale(1.06) rotate(-2deg)}
+.device-image .svg-fallback{width:60%;position:relative;z-index:1}
+.device-body{padding:20px 24px 20px;display:flex;flex-direction:column;flex:1}
+.device-brand{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:4px}
+.device-name{font-family:var(--ff-display);font-size:20px;font-weight:500;letter-spacing:-0.015em;line-height:1.2;margin-bottom:8px;color:var(--ink)}
+.device-rating{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px}
+.stars{display:inline-flex;gap:1px;color:var(--accent);font-size:14px}
+.stars .star-empty{color:var(--line-strong)}
+.rating-count{font-family:var(--ff-mono);font-size:11px;color:var(--muted)}
+.color-dots{display:flex;gap:5px;margin:8px 0 12px}
+.color-dots .dot{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(20,17,16,0.12);cursor:pointer;transition:transform .15s var(--ease)}
+.color-dots .dot:hover{transform:scale(1.2)}
+.color-dots .dot.selected{box-shadow:0 0 0 1.5px var(--paper),0 0 0 3px var(--ink)}
+.color-dots .more-count{font-family:var(--ff-mono);font-size:10px;color:var(--muted);margin-left:4px;align-self:center}
+.device-features{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 14px}
+.device-features span{font-family:var(--ff-mono);font-size:9px;padding:3px 7px;background:var(--paper-2);border-radius:3px;color:var(--ink-soft);letter-spacing:0.04em;text-transform:uppercase}
+.device-pricing{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+.price-label{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:2px}
+.price-main{display:flex;align-items:baseline;gap:8px}
+.price-main .price{font-family:var(--ff-display);font-size:22px;font-weight:600;letter-spacing:-0.02em;color:var(--ink)}
+.price-main .price-strike{font-family:var(--ff-mono);font-size:12px;text-decoration:line-through;color:var(--muted)}
+.price-main .monthly{font-family:var(--ff-mono);font-size:11px;color:var(--muted);margin-left:auto}
+.availability-chip{display:inline-flex;align-items:center;gap:5px;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.04em;color:var(--mint);margin-top:6px}
+.availability-chip.low{color:var(--accent)}
+.availability-chip.preorder{color:var(--blush)}
+.availability-chip::before{content:'●';font-size:8px}
+.card-actions{display:flex;align-items:center;gap:10px;padding:14px 24px;border-top:1px solid var(--line);background:var(--paper)}
+.compare-check{display:flex;align-items:center;gap:8px;cursor:pointer;flex:1;font-size:12px;color:var(--ink-soft)}
+.compare-check input{appearance:none;-webkit-appearance:none;width:14px;height:14px;border:1.5px solid var(--line-strong);border-radius:3px;cursor:pointer;position:relative}
+.compare-check input:checked{background:var(--ink);border-color:var(--ink)}
+.compare-check input:checked::after{content:'';position:absolute;left:3px;top:0;width:4px;height:8px;border:solid var(--paper);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.add-btn{padding:8px 16px;background:var(--ink);color:var(--paper);border-radius:999px;font-size:12px;font-weight:500;transition:background .2s var(--ease)}
+.add-btn:hover{background:var(--accent)}
+.no-results{grid-column:1 / -1;text-align:center;padding:80px 20px;color:var(--muted)}
+.no-results h3{font-family:var(--ff-display);font-size:28px;font-weight:400;color:var(--ink);margin-bottom:8px}
+.no-results p{font-size:15px;margin-bottom:20px}
+
+/* Plans */
+.plans{padding:80px 0}
+.plan-tabs{max-width:1400px;margin:0 auto 40px;padding:0 48px;display:flex;gap:2px}
+.tab{padding:12px 22px;font-size:14px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all .25s var(--ease)}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--ink);border-bottom-color:var(--accent)}
+.plan-grid{max-width:1400px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.plan-card{padding:36px 32px;background:var(--paper);border:1px solid var(--line);border-radius:22px;position:relative;transition:transform .3s var(--ease),border-color .3s var(--ease);display:flex;flex-direction:column}
+.plan-card:hover{transform:translateY(-4px);border-color:var(--line-strong)}
+.plan-card.featured{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.plan-card.featured .plan-price{color:var(--paper)}
+.plan-card.featured .plan-features li{color:var(--paper-3);border-bottom-color:#2b2522}
+.plan-card.featured .plan-features li::before{color:var(--accent-soft)}
+.plan-card.featured .plan-meta{color:var(--paper-3)}
+.ribbon{position:absolute;top:20px;right:20px;padding:4px 10px;background:var(--accent);color:#fff;font-family:var(--ff-mono);font-size:9px;text-transform:uppercase;letter-spacing:0.1em;border-radius:4px}
+.plan-name{font-family:var(--ff-display);font-size:30px;font-weight:400;letter-spacing:-0.02em;margin-bottom:4px}
+.plan-meta{font-family:var(--ff-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:28px}
+.plan-price{font-family:var(--ff-display);font-size:56px;font-weight:350;letter-spacing:-0.03em;line-height:1;margin-bottom:4px}
+.plan-price sub{font-size:14px;font-family:var(--ff-mono);color:var(--muted);margin-left:6px;vertical-align:baseline}
+.plan-card.featured .plan-price sub{color:var(--paper-3)}
+.plan-period{font-family:var(--ff-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:28px}
+.plan-features{list-style:none;margin:0 0 32px;flex:1}
+.plan-features li{padding:10px 0 10px 26px;font-size:14px;position:relative;border-bottom:1px solid var(--line)}
+.plan-features li:last-child{border-bottom:none}
+.plan-features li::before{content:'→';position:absolute;left:0;top:10px;color:var(--accent);font-family:var(--ff-mono);font-weight:500}
+.plan-btn{width:100%;padding:14px;background:var(--ink);color:var(--paper);border-radius:999px;font-size:14px;font-weight:500}
+.plan-btn:hover{background:var(--accent)}
+.plan-card.featured .plan-btn{background:var(--paper);color:var(--ink)}
+.plan-card.featured .plan-btn:hover{background:var(--accent);color:var(--paper)}
+
+/* Trust strip */
+.trust-strip{padding:80px 48px;background:var(--ink);color:var(--paper);display:grid;grid-template-columns:1fr 1fr;gap:80px}
+.trust-copy{max-width:500px}
+.trust-copy .eyebrow{color:var(--paper-3)}
+.trust-copy h2{font-family:var(--ff-display);font-size:clamp(36px,4vw,60px);font-weight:350;letter-spacing:-0.03em;line-height:1.02;margin-bottom:24px}
+.trust-copy h2 em{color:var(--accent-soft)}
+.trust-copy p{color:var(--paper-3);font-size:16px}
+.trust-steps{display:grid;grid-template-columns:repeat(2,1fr);gap:32px 40px}
+.trust-step{padding-top:20px;border-top:1px solid #2b2522}
+.step-num{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.12em;color:var(--accent-soft);display:block;margin-bottom:16px}
+.trust-step h4{font-family:var(--ff-display);font-size:22px;font-weight:400;margin-bottom:8px}
+.trust-step p{font-size:14px;color:var(--paper-3);line-height:1.55}
+
+/* Footer */
+.site-footer{padding:80px 48px 32px;background:var(--paper-2);border-top:1px solid var(--line)}
+.footer-grid{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;padding-bottom:60px;border-bottom:1px solid var(--line)}
+.footer-brand{display:flex;flex-direction:column;gap:20px}
+.footer-tag{font-family:var(--ff-display);font-size:18px;font-weight:400;color:var(--ink-soft);line-height:1.3;max-width:220px}
+.footer-grid h5{font-family:var(--ff-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:18px;font-weight:500}
+.footer-grid a{display:block;padding:6px 0;font-size:14px;color:var(--ink-soft);transition:color .2s var(--ease)}
+.footer-grid a:hover{color:var(--accent)}
+.footer-fine{max-width:1400px;margin:32px auto 0;display:flex;justify-content:space-between;font-family:var(--ff-mono);font-size:11px;color:var(--muted)}
+
+/* Drawer + modal + toast */
+.drawer{position:fixed;top:0;right:0;width:420px;max-width:92vw;height:100vh;background:var(--paper);border-left:1px solid var(--line);box-shadow:var(--shadow-l);transform:translateX(100%);transition:transform .4s var(--ease);z-index:200;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+.drawer-head{padding:22px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.drawer-head h3{font-family:var(--ff-display);font-size:24px;font-weight:400}
+.drawer-body{padding:24px;flex:1;overflow-y:auto}
+.drawer-empty{font-family:var(--ff-display);font-style:italic;color:var(--muted);text-align:center;padding:40px 0}
+.drawer-foot{padding:24px;border-top:1px solid var(--line)}
+.cart-total{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.cart-total span{font-family:var(--ff-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)}
+.cart-total strong{font-family:var(--ff-display);font-size:28px;font-weight:500;letter-spacing:-0.02em}
+.cart-item{display:grid;grid-template-columns:60px 1fr auto;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);align-items:center}
+.cart-item-img{width:60px;height:60px;background:var(--paper-2);border-radius:6px;display:flex;align-items:center;justify-content:center;padding:6px}
+.cart-item-img img{width:100%;height:100%;object-fit:contain}
+.cart-item-name{font-size:14px;font-weight:500;margin-bottom:4px}
+.cart-item-meta{font-family:var(--ff-mono);font-size:10px;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase}
+.cart-item-price{font-family:var(--ff-display);font-weight:500}
+.cart-item-remove{color:var(--muted);font-size:12px;margin-top:4px}
+.cart-item-remove:hover{color:var(--accent)}
+
+/* Cross-sell inside cart drawer */
+.crossell{margin-top:24px;padding-top:24px;border-top:1px dashed var(--line-strong)}
+.crossell-group{margin-bottom:24px}
+.crossell-group:last-child{margin-bottom:0}
+.crossell-pitch{font-family:var(--ff-display);font-size:15px;font-weight:500;line-height:1.35;color:var(--ink);margin-bottom:4px;letter-spacing:-0.01em}
+.crossell-pitch em{color:var(--accent);font-style:normal}
+.crossell-sub{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.crossell-card{display:grid;grid-template-columns:48px 1fr auto;gap:12px;padding:10px 12px;background:var(--paper-2);border:1px solid transparent;border-radius:10px;align-items:center;margin-bottom:8px;transition:all .2s var(--ease)}
+.crossell-card:hover{background:var(--paper-3);border-color:var(--line)}
+.crossell-card-img{width:48px;height:48px;background:var(--paper);border-radius:6px;padding:5px;display:flex;align-items:center;justify-content:center}
+.crossell-card-img img{max-width:100%;max-height:100%;object-fit:contain}
+.crossell-card-img.bundle{background:linear-gradient(145deg,var(--accent) 0%,var(--accent-deep) 100%)}
+.crossell-card-img.bundle.b2{background:linear-gradient(145deg,var(--mint) 0%,#2a4535 100%)}
+.crossell-card-img.bundle.b3{background:linear-gradient(145deg,var(--blush) 0%,#5e2638 100%)}
+.crossell-name{font-size:13px;font-weight:500;line-height:1.3}
+.crossell-meta{font-family:var(--ff-mono);font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:0.04em}
+.crossell-add{padding:6px 12px;background:var(--ink);color:var(--paper);border-radius:999px;font-size:11px;font-weight:600;letter-spacing:0.04em;white-space:nowrap;transition:background .2s var(--ease)}
+.crossell-add:hover{background:var(--accent)}
+.modal{position:fixed;inset:0;background:rgba(20,17,16,0.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px}
+.modal.open{display:flex}
+.modal-card{width:100%;max-width:640px;max-height:90vh;overflow-y:auto;background:var(--paper);border-radius:32px;padding:48px;position:relative;box-shadow:var(--shadow-l)}
+.modal-card.compare-card{max-width:1100px;padding:40px}
+.modal-close{position:absolute;top:20px;right:20px}
+.modal-body h2{font-family:var(--ff-display);font-size:40px;font-weight:400;letter-spacing:-0.02em;margin-bottom:10px}
+.modal-body .eyebrow{margin-bottom:20px}
+.modal-body p{color:var(--ink-soft);margin-bottom:24px}
+.form-field{margin-bottom:20px}
+.form-field label{display:block;font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px}
+.form-field input,.form-field select{width:100%;padding:12px 16px;background:var(--paper-2);border:1px solid transparent;border-radius:14px;font-family:var(--ff-body);font-size:15px;color:var(--ink);transition:border-color .2s var(--ease)}
+.form-field input:focus,.form-field select:focus{outline:none;border-color:var(--accent);background:var(--paper)}
+.flow-steps{display:flex;gap:8px;margin-bottom:32px}
+.flow-step{flex:1;height:3px;background:var(--line);border-radius:2px}
+.flow-step.active{background:var(--accent)}
+.flow-result{text-align:center;padding:20px 0}
+.flow-result .result-icon{font-size:48px;color:var(--mint);margin-bottom:16px}
+.flow-result .result-icon.error{color:var(--accent)}
+.compare-table{width:100%;margin-top:20px;border-collapse:collapse}
+.compare-table th,.compare-table td{padding:14px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.compare-table thead th{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:500;padding-bottom:18px}
+.compare-table .cmp-name{font-family:var(--ff-display);font-size:18px;font-weight:500}
+.compare-table .cmp-brand{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:12px}
+.compare-table .cmp-img{width:100px;height:100px;background:var(--paper-2);border-radius:6px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;padding:8px}
+.compare-table .cmp-img img{width:100%;height:100%;object-fit:contain}
+.compare-table tbody th{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.04em;color:var(--muted);font-weight:500;width:160px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);padding:14px 24px;background:var(--ink);color:var(--paper);border-radius:999px;font-size:14px;font-weight:500;z-index:400;transition:transform .4s var(--ease);box-shadow:var(--shadow-l)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Checkout modal */
+/* Full-page checkout (replaces modal overlay) */
+.checkout-modal{display:none;position:relative;z-index:auto;padding:0;background:transparent;backdrop-filter:none}
+.checkout-modal.open{display:block;animation:fadeInPage .4s var(--ease)}
+@keyframes fadeInPage{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.checkout-page-wrap{max-width:1200px;margin:0 auto;padding:60px 48px 120px;display:grid;grid-template-columns:1fr 380px;gap:60px;align-items:flex-start}
+.checkout-card{width:auto;max-width:none;background:transparent;border-radius:0;padding:0;position:static;box-shadow:none;margin:0}
+
+/* Checkout-mode body modifier — hides catalog when checkout is active */
+body.checkout-mode .hero,
+body.checkout-mode .quick-actions,
+body.checkout-mode .devices,
+body.checkout-mode .plans,
+body.checkout-mode .accessories,
+body.checkout-mode .bundles,
+body.checkout-mode .account,
+body.checkout-mode .trust-strip,
+body.checkout-mode .site-footer{display:none}
+body.checkout-mode .primary-nav,
+body.checkout-mode .header-actions{display:none}
+body.checkout-mode .site-header{grid-template-columns:auto 1fr auto;gap:24px}
+.secure-badge{display:none;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;color:var(--mint);font-weight:500}
+.secure-badge svg{flex-shrink:0}
+body.checkout-mode .secure-badge{display:inline-flex}
+
+/* Order-placed success state — hide cart entirely, sidebar, etc. */
+body.checkout-success .icon-btn[aria-label="Cart"]{display:none}
+body.checkout-success .checkout-sidebar{display:none}
+body.checkout-success .checkout-page-wrap{grid-template-columns:1fr;max-width:720px}
+body.checkout-success .step-indicator{display:none}
+body.checkout-success .checkout-head{display:none}
+
+/* Order summary sidebar */
+.checkout-sidebar{position:sticky;top:88px;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:20px}
+.sidebar-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted)}
+.sidebar-head a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.sidebar-head a:hover{color:var(--accent-deep)}
+.sidebar-items{display:flex;flex-direction:column;gap:12px;max-height:280px;overflow-y:auto;padding-right:4px}
+.sidebar-items::-webkit-scrollbar{width:4px}
+.sidebar-items::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:2px}
+.sidebar-item{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.sidebar-item:last-child{border-bottom:none;padding-bottom:0}
+.sidebar-item-img{width:44px;height:44px;background:var(--paper-2);border-radius:6px;padding:4px;display:flex;align-items:center;justify-content:center}
+.sidebar-item-img img{max-width:100%;max-height:100%;object-fit:contain}
+.sidebar-item-name{font-size:13px;font-weight:500;line-height:1.3}
+.sidebar-item-meta{font-family:var(--ff-mono);font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:0.04em}
+.sidebar-item-price{font-family:var(--ff-display);font-size:14px;font-weight:600}
+.sidebar-totals{padding-top:16px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.sidebar-row{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft)}
+.sidebar-row strong{color:var(--ink);font-weight:500}
+.sidebar-row.grand{padding-top:10px;margin-top:6px;border-top:1px solid var(--line);font-family:var(--ff-display);font-size:18px;font-weight:500}
+.sidebar-row.grand strong{font-size:22px;letter-spacing:-0.02em}
+.sidebar-mobile-toggle{display:none}
+
+@media (max-width:980px){
+  .checkout-page-wrap{grid-template-columns:1fr;gap:24px;padding:32px 20px 80px}
+  .checkout-sidebar{position:relative;top:0;order:-1}
+  .sidebar-mobile-toggle{display:flex;justify-content:space-between;align-items:center;width:100%;padding:0;background:transparent;color:var(--ink);font-size:14px;font-weight:500;cursor:pointer}
+  .sidebar-mobile-toggle svg{transition:transform .2s var(--ease)}
+  .checkout-sidebar.collapsed .sidebar-mobile-toggle svg{transform:rotate(-90deg)}
+  .checkout-sidebar.collapsed .sidebar-head,
+  .checkout-sidebar.collapsed .sidebar-items,
+  .checkout-sidebar.collapsed .sidebar-totals{display:none}
+}
+.checkout-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.checkout-head h2{font-family:var(--ff-display);font-size:32px;font-weight:400;letter-spacing:-0.02em}
+.step-indicator{display:flex;gap:12px;margin-bottom:40px}
+.step-dot{flex:1;display:flex;flex-direction:column;gap:8px}
+.step-dot .bar{height:3px;background:var(--line-strong);border-radius:2px;transition:background .3s var(--ease)}
+.step-dot .label{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);transition:color .3s var(--ease)}
+.step-dot.active .bar{background:var(--accent)}
+.step-dot.active .label{color:var(--ink)}
+.step-dot.done .bar{background:var(--mint)}
+.step-dot.done .label{color:var(--mint)}
+.step-pane{display:none}
+.step-pane.active{display:block}
+.account-toggle{display:flex;gap:2px;background:var(--paper-2);border-radius:999px;padding:4px;margin-bottom:24px}
+.account-toggle button{flex:1;padding:10px 16px;background:transparent;border-radius:999px;font-size:13px;font-weight:500;color:var(--muted);transition:all .2s var(--ease)}
+.account-toggle button.active{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field-row .form-field{margin-bottom:0}
+.form-section{margin-bottom:28px}
+.form-section-title{font-family:var(--ff-display);font-size:20px;font-weight:500;margin-bottom:14px;letter-spacing:-0.01em}
+.same-as-shipping{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:14px;color:var(--ink-soft);cursor:pointer}
+.same-as-shipping input{appearance:none;-webkit-appearance:none;width:16px;height:16px;border:1.5px solid var(--line-strong);background:var(--paper);border-radius:3px;cursor:pointer;position:relative;flex-shrink:0}
+.same-as-shipping input:checked{background:var(--ink);border-color:var(--ink)}
+.same-as-shipping input:checked::after{content:'';position:absolute;left:4px;top:1px;width:5px;height:9px;border:solid var(--paper);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.payment-methods{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.pay-method{padding:16px 20px;border:1.5px solid var(--line);border-radius:14px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s var(--ease);background:var(--paper)}
+.pay-method:hover{border-color:var(--line-strong)}
+.pay-method.selected{border-color:var(--accent);background:rgba(194,65,12,0.04)}
+.pay-method-radio{width:18px;height:18px;border:1.5px solid var(--line-strong);border-radius:50%;flex-shrink:0;position:relative;transition:all .2s var(--ease)}
+.pay-method.selected .pay-method-radio{border-color:var(--accent)}
+.pay-method.selected .pay-method-radio::after{content:'';position:absolute;top:3px;left:3px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.pay-method-body{flex:1}
+.pay-method-title{font-size:15px;font-weight:500;margin-bottom:2px}
+.pay-method-meta{font-family:var(--ff-mono);font-size:11px;color:var(--muted);letter-spacing:0.04em}
+.pay-method-icon{display:flex;gap:4px}
+.pay-method-icon span{width:28px;height:18px;border-radius:3px;display:inline-block;font-family:var(--ff-mono);font-size:8px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;letter-spacing:0.03em}
+.card-fields{border:1.5px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px;background:var(--paper-2)}
+.financing-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.financing-option{padding:14px 16px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;text-align:center;transition:all .2s var(--ease)}
+.financing-option:hover{border-color:var(--line-strong)}
+.financing-option.selected{border-color:var(--accent);background:rgba(194,65,12,0.04)}
+.financing-option .fo-term{font-family:var(--ff-display);font-size:20px;font-weight:500;letter-spacing:-0.01em}
+.financing-option .fo-rate{font-family:var(--ff-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px}
+.financing-option .fo-monthly{font-family:var(--ff-mono);font-size:12px;color:var(--accent);margin-top:4px}
+.review-section{padding:20px;background:var(--paper-2);border-radius:14px;margin-bottom:14px}
+.review-section-title{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.review-section-title h4{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);font-weight:500}
+.review-section-title button{font-family:var(--ff-mono);font-size:11px;color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.review-line{padding:4px 0;font-size:14px;color:var(--ink-soft)}
+.review-line strong{color:var(--ink);font-weight:500}
+.review-items{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.review-item{display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center}
+.review-item-img{width:50px;height:50px;background:var(--paper);border-radius:6px;padding:5px;display:flex;align-items:center;justify-content:center}
+.review-item-img img{width:100%;height:100%;object-fit:contain}
+.review-item-name{font-size:13px;font-weight:500}
+.review-item-meta{font-family:var(--ff-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+.review-item-price{font-family:var(--ff-display);font-size:15px;font-weight:500}
+.totals-table{width:100%;font-size:14px;margin-top:8px}
+.totals-table td{padding:6px 0;color:var(--ink-soft)}
+.totals-table td:last-child{text-align:right;color:var(--ink);font-weight:500}
+.totals-table tr.grand td{padding-top:14px;border-top:1px solid var(--line);font-family:var(--ff-display);font-size:22px;font-weight:500;color:var(--ink)}
+.step-actions{display:flex;gap:10px;margin-top:32px}
+.step-actions .btn-ghost{flex:0 0 auto}
+.step-actions .btn-primary{flex:1}
+.field-error{color:var(--accent);font-size:12px;margin-top:4px;font-family:var(--ff-mono)}
+.form-field input.has-error,.form-field select.has-error{border-color:var(--accent) !important}
+.password-hint{font-size:11px;color:var(--muted);margin-top:6px;font-family:var(--ff-mono)}
+.signup-note{background:var(--paper-2);padding:14px 16px;border-radius:10px;font-size:13px;color:var(--ink-soft);margin-bottom:18px;line-height:1.5}
+.signup-note strong{color:var(--accent)}
+
+/* Accessories */
+.accessories{padding:80px 0;background:var(--paper-2)}
+.accessory-scroll{overflow:hidden;max-width:1400px;margin:0 auto}
+.accessory-track{display:flex;gap:20px;padding:0 48px 20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:48px}
+.accessory-track::-webkit-scrollbar{height:4px}
+.accessory-track::-webkit-scrollbar-track{background:var(--line)}
+.accessory-track::-webkit-scrollbar-thumb{background:var(--ink-soft);border-radius:2px}
+.accessory-card{flex:0 0 300px;background:var(--paper);border-radius:14px;overflow:hidden;scroll-snap-align:start;transition:transform .3s var(--ease),box-shadow .3s var(--ease);cursor:pointer;border:1px solid transparent}
+.accessory-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-m);border-color:var(--line)}
+.accessory-image{aspect-ratio:4/3;background:linear-gradient(145deg,var(--paper) 0%,var(--paper-2) 100%);display:flex;align-items:center;justify-content:center;position:relative;padding:24px}
+.accessory-image img{max-width:80%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(20,17,16,0.12));transition:transform .4s var(--ease)}
+.accessory-card:hover .accessory-image img{transform:scale(1.06)}
+.accessory-image .acc-svg{width:60%;height:auto}
+.accessory-body{padding:18px 22px}
+.accessory-cat{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:4px}
+.accessory-name{font-family:var(--ff-display);font-size:18px;font-weight:500;letter-spacing:-0.01em;line-height:1.2;margin-bottom:10px}
+.accessory-features{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;min-height:38px}
+.accessory-features span{font-family:var(--ff-mono);font-size:9px;padding:3px 6px;background:var(--paper-2);border-radius:3px;color:var(--ink-soft);letter-spacing:0.04em}
+.accessory-foot{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--line)}
+.accessory-price{font-family:var(--ff-display);font-size:18px;font-weight:600;letter-spacing:-0.01em}
+
+/* Bundles */
+.bundles{padding:80px 0}
+.bundle-grid{max-width:1400px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.bundle-card{padding:40px;border-radius:22px;position:relative;overflow:hidden;min-height:380px;display:flex;flex-direction:column;justify-content:space-between;color:var(--paper);cursor:pointer;transition:transform .4s var(--ease)}
+.bundle-card:hover{transform:translateY(-6px)}
+.bundle-card.b1{background:linear-gradient(145deg,var(--accent) 0%,var(--accent-deep) 100%)}
+.bundle-card.b2{background:linear-gradient(145deg,var(--mint) 0%,#2a4535 100%)}
+.bundle-card.b3{background:linear-gradient(145deg,var(--blush) 0%,#5e2638 100%)}
+.bundle-card::after{content:'';position:absolute;top:-50%;right:-30%;width:500px;height:500px;background:radial-gradient(circle,rgba(255,255,255,0.12) 0%,transparent 60%);pointer-events:none}
+.bundle-save{font-family:var(--ff-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.12em;opacity:0.85;margin-bottom:14px;position:relative;z-index:1}
+.bundle-name{font-family:var(--ff-display);font-size:38px;font-weight:350;letter-spacing:-0.02em;line-height:1;margin-bottom:12px;position:relative;z-index:1}
+.bundle-desc{font-size:15px;opacity:0.9;max-width:300px;line-height:1.5;position:relative;z-index:1}
+.bundle-foot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:32px;position:relative;z-index:1}
+.bundle-price{font-family:var(--ff-display);font-size:36px;font-weight:500;letter-spacing:-0.02em}
+.bundle-price sub{font-size:13px;opacity:0.8;font-family:var(--ff-mono);margin-left:4px}
+.bundle-btn{padding:10px 18px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:999px;color:var(--paper);font-size:13px;font-weight:500;transition:background .2s var(--ease)}
+.bundle-btn:hover{background:rgba(255,255,255,0.25)}
+
+/* My Account dashboard */
+.account{padding:80px 0;background:var(--paper-2)}
+.account-grid{max-width:1400px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+.account-card{background:var(--paper);border-radius:18px;padding:28px;border:1px solid var(--line);transition:border-color .2s var(--ease)}
+.account-card:hover{border-color:var(--line-strong)}
+.account-card.span2{grid-column:span 2}
+.account-card.dark{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.account-card.dark .ac-label{color:var(--paper-3)}
+.ac-label{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.ac-label a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.ac-label a:hover{color:var(--accent-deep)}
+.ac-greeting{font-family:var(--ff-display);font-size:32px;font-weight:400;letter-spacing:-0.02em;margin-bottom:6px;line-height:1.1}
+.ac-greeting em{color:var(--accent-soft);font-style:normal}
+.ac-sub{color:var(--paper-3);font-size:14px;margin-bottom:24px;line-height:1.5}
+.ac-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding-top:18px;border-top:1px solid #2b2522}
+.ac-stats > div{display:flex;flex-direction:column}
+.ac-stats strong{font-family:var(--ff-display);font-size:22px;font-weight:500;letter-spacing:-0.02em;margin-bottom:4px;color:var(--paper)}
+.ac-stats span{font-family:var(--ff-mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--paper-3)}
+.lines-list{display:flex;flex-direction:column}
+.line-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);gap:12px}
+.line-row:last-child{border-bottom:none}
+.line-meta{flex:1;min-width:0}
+.line-num{font-family:var(--ff-mono);font-size:14px;font-weight:500}
+.line-info{font-size:11px;color:var(--muted);font-family:var(--ff-mono);margin-top:2px;letter-spacing:0.04em}
+.line-status{font-family:var(--ff-mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;padding:3px 8px;border-radius:3px;background:rgba(63,107,82,0.12);color:var(--mint);flex-shrink:0;font-weight:600}
+.line-status.warn{background:rgba(194,65,12,0.12);color:var(--accent)}
+.usage-mini{display:flex;flex-direction:column;gap:18px}
+.usage-mini-row{display:flex;flex-direction:column;gap:6px}
+.usage-mini-top{display:flex;justify-content:space-between;font-family:var(--ff-mono);font-size:11px;color:var(--ink-soft)}
+.usage-mini-top strong{color:var(--ink);font-weight:500}
+.usage-mini-bar{height:5px;background:var(--paper-2);border-radius:3px;overflow:hidden}
+.usage-mini-fill{height:100%;border-radius:3px;transition:width .5s var(--ease)}
+.usage-mini-fill.ok{background:var(--mint)}
+.usage-mini-fill.warn{background:var(--accent)}
+.order-list{display:flex;flex-direction:column}
+.order-row{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px;align-items:center}
+.order-row:last-child{border-bottom:none}
+.order-name{font-weight:500}
+.order-id{font-family:var(--ff-mono);font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:0.04em}
+.order-status{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.06em;padding:3px 8px;border-radius:3px;font-weight:600;white-space:nowrap}
+.order-status.delivered{background:rgba(63,107,82,0.12);color:var(--mint)}
+.order-status.shipping{background:rgba(96,165,250,0.12);color:#2563eb}
+.order-status.processing{background:rgba(180,83,120,0.12);color:var(--blush)}
+.account-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.account-action{padding:14px;background:var(--paper-2);border:1px solid transparent;border-radius:10px;text-align:left;cursor:pointer;transition:all .2s var(--ease);display:flex;flex-direction:column;gap:4px}
+.account-action:hover{background:var(--paper-3);border-color:var(--line-strong)}
+.account-action .aa-icon{font-size:18px;color:var(--accent);margin-bottom:4px}
+.account-action .aa-title{font-size:13px;font-weight:500}
+.account-action .aa-sub{font-family:var(--ff-mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+
+.demo-badge{position:fixed;bottom:16px;left:16px;z-index:9998;padding:6px 12px;background:rgba(20,17,16,0.9);color:#f97316;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.1em;border-radius:4px;backdrop-filter:blur(8px);box-shadow:0 4px 12px rgba(0,0,0,0.15);display:flex;align-items:center;gap:6px}
+.demo-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:#f97316;box-shadow:0 0 8px #f97316;animation:demoBlink 1.6s ease-in-out infinite}
+@keyframes demoBlink{0%,100%{opacity:1}50%{opacity:0.3}}
+.demo-badge a{color:#c4b5a8;margin-left:4px;text-decoration:underline;text-underline-offset:2px}
+.demo-badge a:hover{color:#fff}
+
+/* Cross-sell modal (shown on Place order click before submit) */
+.xs-modal{position:fixed;inset:0;background:rgba(20,17,16,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:320;padding:20px}
+.xs-modal.open{display:flex;animation:fadeInPage .25s var(--ease)}
+.xs-modal-card{width:100%;max-width:580px;max-height:90vh;overflow-y:auto;background:var(--paper);border-radius:24px;padding:36px;box-shadow:var(--shadow-l);position:relative}
+.xs-modal-eyebrow{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.xs-modal-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
+.xs-modal-title{font-family:var(--ff-display);font-size:28px;font-weight:400;letter-spacing:-0.02em;line-height:1.15;margin-bottom:8px}
+.xs-modal-title em{color:var(--accent);font-family:var(--ff-accent);font-weight:500;font-style:normal}
+.xs-modal-sub{font-size:14px;color:var(--ink-soft);margin-bottom:24px;line-height:1.5}
+.xs-modal-body{display:flex;flex-direction:column;gap:20px;margin-bottom:24px}
+.xs-modal-actions{display:flex;gap:10px;padding-top:20px;border-top:1px solid var(--line)}
+.xs-modal-actions .btn-ghost{flex:1}
+.xs-modal-actions .btn-primary{flex:1}
+
+/* Sign-in modal (variant of xs-modal, narrower) */
+.signin-modal{position:fixed;inset:0;background:rgba(20,17,16,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:320;padding:20px}
+.signin-modal.open{display:flex;animation:fadeInPage .25s var(--ease)}
+.signin-card{width:100%;max-width:440px;background:var(--paper);border-radius:24px;padding:36px;box-shadow:var(--shadow-l);position:relative}
+.signin-eyebrow{font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.signin-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
+.signin-title{font-family:var(--ff-display);font-size:28px;font-weight:400;letter-spacing:-0.02em;line-height:1.15;margin-bottom:8px}
+.signin-sub{font-size:14px;color:var(--ink-soft);margin-bottom:24px;line-height:1.5}
+.signin-close{position:absolute;top:18px;right:18px}
+.signin-modal .form-field{margin-bottom:16px}
+.signin-forgot{display:block;text-align:right;font-size:13px;color:var(--accent);text-decoration:underline;text-underline-offset:2px;margin:-8px 0 20px;cursor:pointer}
+.signin-forgot:hover{color:var(--accent-deep)}
+.signin-divider{display:flex;align-items:center;gap:12px;margin:24px 0 16px;font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted)}
+.signin-divider::before,.signin-divider::after{content:'';flex:1;height:1px;background:var(--line)}
+.signin-newcust{text-align:center;font-size:14px;color:var(--ink-soft)}
+.signin-newcust a{color:var(--accent);font-weight:500;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.signin-newcust a:hover{color:var(--accent-deep)}
+.signin-back{display:inline-flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:12px;color:var(--ink-soft);margin-top:14px;cursor:pointer}
+.signin-back:hover{color:var(--accent)}
+.signin-success{text-align:center;padding:8px 0}
+.signin-success-icon{font-size:48px;color:var(--mint);margin-bottom:16px;line-height:1}
+
+/* Responsive */
+@media (max-width:1100px){.catalog-layout{grid-template-columns:200px 1fr;gap:24px}.device-grid{grid-template-columns:repeat(2,1fr)}.actions-grid{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr;gap:40px}.bundle-grid{grid-template-columns:1fr 1fr}.account-grid{grid-template-columns:1fr 1fr}.account-card.span2{grid-column:span 2}}
+@media (max-width:820px){.site-header{grid-template-columns:auto auto;gap:16px;padding:14px 20px}.primary-nav{display:none}.hero{padding:30px 20px 0}.hero-grid{grid-template-columns:1fr;gap:32px;min-height:auto}.hero-visual{height:auto}.hero-service{max-width:100%}.catalog-top,.catalog-layout{grid-template-columns:1fr}.filter-rail{position:static;max-height:none;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--line)}.section-head,.actions-grid,.plan-grid,.catalog-top,.catalog-layout,.plan-tabs,.bundle-grid,.account-grid{padding-left:20px;padding-right:20px}.device-grid,.plan-grid{grid-template-columns:1fr 1fr}.actions-grid{grid-template-columns:1fr}.plan-grid{grid-template-columns:1fr}.bundle-grid{grid-template-columns:1fr}.account-grid{grid-template-columns:1fr}.account-card.span2{grid-column:span 1}.trust-strip{grid-template-columns:1fr;padding:80px 20px;gap:48px}.modal-card{padding:32px 24px}.accessory-track{padding:0 20px 20px}}
+@media (max-width:520px){.device-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}.hero-stats{grid-template-columns:1fr;gap:16px}.account-actions{grid-template-columns:1fr}}
+
+/* Cognizant co-branding */
+.cognizant-wordmark{font-family:'Figtree','Inter',system-ui,sans-serif;font-weight:600;font-size:18px;color:#0033a1;letter-spacing:-0.02em;line-height:1;display:inline-flex;align-items:center;height:22px}
+.cognizant-divider{width:1px;height:22px;background:rgba(20,17,16,0.18);margin:0 14px;flex-shrink:0}
+.cobrand-lockup{display:flex;align-items:center;gap:0}
+.cognizant-attribution{font-family:var(--ff-mono,'JetBrains Mono',monospace);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted,#7a7470);margin-top:24px}
+.cognizant-attribution strong{color:#0033a1;font-weight:600;letter-spacing:-0.01em;text-transform:none;font-family:'Figtree','Inter',system-ui,sans-serif;font-size:11px}
+
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header class="site-header">
+  <div class="cobrand-lockup">
+    <span class="cognizant-wordmark">Cognizant</span>
+    <span class="cognizant-divider"></span>
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 80 80" aria-label="iConnecTelco">
+      <rect x="16" y="34" width="5" height="6" rx="1" fill="#14110f"/>
+      <rect x="25" y="30" width="5" height="10" rx="1" fill="#14110f"/>
+      <rect x="34" y="26" width="5" height="14" rx="1" fill="#14110f"/>
+      <rect x="42.5" y="10" width="5" height="62" rx="1" fill="#c2410c"/>
+      <rect x="51" y="26" width="5" height="14" rx="1" fill="#14110f"/>
+      <rect x="60" y="30" width="5" height="10" rx="1" fill="#14110f"/>
+      <rect x="69" y="34" width="5" height="6" rx="1" fill="#14110f"/>
+      <rect x="12" y="40" width="66" height="5" rx="1" fill="#14110f"/>
+    </svg>
+    <span class="brand-name"><em>i</em>Connec<span class="t-accent">T</span>elco</span>
+  </div>
+  </div><!-- /.cobrand-lockup -->
+  <nav class="primary-nav">
+    <a href="#devices">Devices</a>
+    <a href="#plans">Plans</a>
+    <a href="#accessories">Accessories</a>
+    <a href="#bundles">Bundles</a>
+    <a href="#account">My Account</a>
+    <a href="#servicesHero">Service</a>
+  </nav>
+  <div class="header-actions">
+    <button class="icon-btn" aria-label="Search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    <button class="icon-btn" aria-label="Cart" onclick="openCart()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.5 12h12l2.5-9H6"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg><span class="cart-badge" id="cartBadge">0</span></button>
+    <button class="btn-pill" onclick="openSignInModal()">Sign in</button>
+  </div>
+  <div class="secure-badge" aria-live="polite">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    <span>Secure checkout</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="dot"></span><span>Spring Collection · 2026</span></div>
+      <h1 class="hero-title">Every phone.<br/><em>Every network.</em><br/>One bill.</h1>
+      <p class="hero-lede">Buy the phone you actually want. Port your number in minutes. Pick a plan that flexes with your life — all without a single phone call.</p>
+      <div class="hero-cta">
+        <a href="#devices" class="btn-primary">Shop phones →</a>
+        <a href="#plans" class="btn-ghost">Build a plan</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>4.9★</strong><span>34k reviews</span></div>
+        <div><strong>12 min</strong><span>avg. activation</span></div>
+        <div><strong>99.98%</strong><span>network uptime</span></div>
+      </div>
+    </div>
+    <div class="hero-visual" id="servicesHero">
+      <div class="hero-service">
+        <h2 class="hero-service-title">Take care of anything. <em>Without a call.</em></h2>
+        <div class="hero-service-grid">
+          <button class="hero-service-tile" onclick="startFlow('activation')">
+            <span class="hero-service-icon">◉</span>
+            <span class="hero-service-label">New activation</span>
+          </button>
+          <button class="hero-service-tile" onclick="startFlow('upgrade')">
+            <span class="hero-service-icon">△</span>
+            <span class="hero-service-label">Device upgrade</span>
+          </button>
+          <button class="hero-service-tile" onclick="startFlow('simswap')">
+            <span class="hero-service-icon">◇</span>
+            <span class="hero-service-label">SIM swap</span>
+          </button>
+          <button class="hero-service-tile" onclick="startFlow('planchange')">
+            <span class="hero-service-icon">≋</span>
+            <span class="hero-service-label">Plan change</span>
+          </button>
+          <button class="hero-service-tile" onclick="startFlow('portin')">
+            <span class="hero-service-icon">↔</span>
+            <span class="hero-service-label">Port-in order</span>
+          </button>
+          <button class="hero-service-tile" onclick="startFlow('bundle')">
+            <span class="hero-service-icon">❖</span>
+            <span class="hero-service-label">Bundle & save</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="marquee"><div class="marquee-track"><span>Free next-day delivery</span><span>◆</span><span>Trade-in up to $1,200</span><span>◆</span><span>Autonomous activation</span><span>◆</span><span>Keep your number</span><span>◆</span><span>No credit check on prepaid</span><span>◆</span><span>Free next-day delivery</span><span>◆</span><span>Trade-in up to $1,200</span><span>◆</span><span>Autonomous activation</span><span>◆</span><span>Keep your number</span><span>◆</span><span>No credit check on prepaid</span><span>◆</span></div></div>
+</section>
+
+<section class="devices" id="devices">
+  <div class="section-head">
+    <h2>The world's best phones, <em>curated.</em></h2>
+    <p>Real hardware from Apple, Samsung, Google, Motorola, and OnePlus — shipped free, pre-provisioned with your plan, activated before it arrives.</p>
+  </div>
+
+  <div class="catalog-top">
+    <div class="brand-pills">
+      <button class="brand-pill active" data-brand="all">All brands</button>
+      <button class="brand-pill" data-brand="Apple">Apple</button>
+      <button class="brand-pill" data-brand="Samsung">Samsung</button>
+      <button class="brand-pill" data-brand="Google">Google</button>
+      <button class="brand-pill" data-brand="Motorola">Motorola</button>
+      <button class="brand-pill" data-brand="OnePlus">OnePlus</button>
+    </div>
+    <div class="catalog-count">
+      <span id="resultsCount">8 results</span>
+      <div class="sort-by">
+        <label>Sort</label>
+        <select id="sortBy" onchange="applyFilters()">
+          <option value="featured">Featured</option>
+          <option value="price-asc">Price: low → high</option>
+          <option value="price-desc">Price: high → low</option>
+          <option value="rating">Top rated</option>
+          <option value="newest">Newest</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="catalog-layout">
+    <aside class="filter-rail">
+      <div class="filter-group">
+        <button class="filter-head" onclick="toggleFilter(this)"><span>Brand</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="filter-body">
+          <label><input type="checkbox" class="f-brand" value="Apple"/><span>Apple</span></label>
+          <label><input type="checkbox" class="f-brand" value="Samsung"/><span>Samsung</span></label>
+          <label><input type="checkbox" class="f-brand" value="Google"/><span>Google</span></label>
+          <label><input type="checkbox" class="f-brand" value="Motorola"/><span>Motorola</span></label>
+          <label><input type="checkbox" class="f-brand" value="OnePlus"/><span>OnePlus</span></label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <button class="filter-head" onclick="toggleFilter(this)"><span>Operating system</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="filter-body">
+          <label><input type="checkbox" class="f-os" value="iOS"/><span>iOS</span></label>
+          <label><input type="checkbox" class="f-os" value="Android"/><span>Android</span></label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <button class="filter-head" onclick="toggleFilter(this)"><span>Display size</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="filter-body">
+          <label><input type="checkbox" class="f-display" value="compact"/><span>Compact (under 6.5")</span></label>
+          <label><input type="checkbox" class="f-display" value="standard"/><span>Standard (6.5"–6.8")</span></label>
+          <label><input type="checkbox" class="f-display" value="large"/><span>Large (6.9"+)</span></label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <button class="filter-head" onclick="toggleFilter(this)"><span>Form factor</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="filter-body">
+          <label><input type="checkbox" class="f-form" value="slab"/><span>Standard slab</span></label>
+          <label><input type="checkbox" class="f-form" value="foldable"/><span>Foldable</span></label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <button class="filter-head" onclick="toggleFilter(this)"><span>Price</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="filter-body">
+          <label><input type="checkbox" class="f-price" value="0-1000"/><span>Under $1,000</span></label>
+          <label><input type="checkbox" class="f-price" value="1000-1300"/><span>$1,000 – $1,300</span></label>
+          <label><input type="checkbox" class="f-price" value="1300+"/><span>Over $1,300</span></label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <button class="filter-head" onclick="toggleFilter(this)"><span>Rating</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="filter-body">
+          <label><input type="radio" name="rating" class="f-rating" value="4.5"/><span>★★★★★ 4.5+</span></label>
+          <label><input type="radio" name="rating" class="f-rating" value="4"/><span>★★★★☆ 4.0+</span></label>
+          <label><input type="radio" name="rating" class="f-rating" value="0"/><span>All ratings</span></label>
+        </div>
+      </div>
+      <div class="filter-footer">
+        <button class="btn-primary wide" onclick="applyFilters()">Show results</button>
+        <button class="link-btn" onclick="clearFilters()">Clear all</button>
+      </div>
+    </aside>
+
+    <div class="catalog-main">
+      <div class="compare-tray" id="compareTray" hidden>
+        <div class="compare-tray-inner">
+          <span class="compare-label">Compare</span>
+          <div class="compare-items" id="compareItems"></div>
+          <button class="btn-pill compare-go" onclick="openCompare()">Compare →</button>
+          <button class="link-btn" onclick="clearCompare()">Clear</button>
+        </div>
+      </div>
+      <div class="device-grid" id="deviceGrid"></div>
+    </div>
+  </div>
+</section>
+
+<section class="plans" id="plans">
+  <div class="section-head">
+    <h2>Choose your <em>appetite.</em></h2>
+    <p>Mobile, home internet, or both. Switch tiers whenever you like — your bill adjusts to the day.</p>
+  </div>
+  <div class="plan-tabs">
+    <button class="tab active" data-tab="mobile">Mobile</button>
+    <button class="tab" data-tab="internet">Home internet</button>
+    <button class="tab" data-tab="prepaid">Prepaid</button>
+  </div>
+  <div class="plan-grid" id="planGrid"></div>
+</section>
+
+<!-- ACCESSORIES -->
+<section class="accessories" id="accessories">
+  <div class="section-head">
+    <h2>Objects <em>of daily use.</em></h2>
+    <p>Watches and earbuds from Apple, Samsung, and Google — selected for build quality, longevity, and seamless pairing with your phone.</p>
+  </div>
+  <div class="accessory-scroll">
+    <div class="accessory-track" id="accessoryTrack"></div>
+  </div>
+</section>
+
+<!-- BUNDLES -->
+<section class="bundles" id="bundles">
+  <div class="section-head">
+    <h2>Save more, <em>think less.</em></h2>
+    <p>Combine devices, plans, and home internet into a single bill — and save up to $680 a year.</p>
+  </div>
+  <div class="bundle-grid" id="bundleGrid"></div>
+</section>
+
+<!-- MY ACCOUNT -->
+<section class="account" id="account">
+  <div class="section-head">
+    <h2>Your account, <em>at a glance.</em></h2>
+    <p>What's live, what's owed, what's on the way. Below is a sample dashboard for a returning customer.</p>
+  </div>
+  <div class="account-grid" id="accountGrid"></div>
+</section>
+
+<section class="trust-strip">
+  <div class="trust-copy">
+    <div class="eyebrow"><span class="dot"></span><span>How this works</span></div>
+    <h2>Autonomous by default. <em>Human by exception.</em></h2>
+    <p>Every order and service change runs through our orchestration engine. If a step falters, we recover it automatically. If we truly can't, a specialist reaches you — with full context, no repetition.</p>
+  </div>
+  <div class="trust-steps">
+    <div class="trust-step"><span class="step-num">01</span><h4>You click</h4><p>Select a device, plan, or service action.</p></div>
+    <div class="trust-step"><span class="step-num">02</span><h4>We verify</h4><p>ID, credit, port eligibility — instantly.</p></div>
+    <div class="trust-step"><span class="step-num">03</span><h4>We provision</h4><p>eSIM generated, number reserved, device flashed.</p></div>
+    <div class="trust-step"><span class="step-num">04</span><h4>You're live</h4><p>Average time end-to-end: 12 minutes.</p></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="brand">
+        <svg width="40" height="40" viewBox="0 0 80 80">
+          <rect x="16" y="34" width="5" height="6" rx="1" fill="#14110f"/>
+          <rect x="25" y="30" width="5" height="10" rx="1" fill="#14110f"/>
+          <rect x="34" y="26" width="5" height="14" rx="1" fill="#14110f"/>
+          <rect x="42.5" y="10" width="5" height="62" rx="1" fill="#c2410c"/>
+          <rect x="51" y="26" width="5" height="14" rx="1" fill="#14110f"/>
+          <rect x="60" y="30" width="5" height="10" rx="1" fill="#14110f"/>
+          <rect x="69" y="34" width="5" height="6" rx="1" fill="#14110f"/>
+          <rect x="12" y="40" width="66" height="5" rx="1" fill="#14110f"/>
+        </svg>
+        <span class="brand-name" style="font-size:24px"><em>i</em>Connec<span class="t-accent">T</span>elco</span>
+      </div>
+      <p class="footer-tag">A calmer telecom.<br/>Built in 2026.</p>
+    </div>
+    <div><h5>Shop</h5><a href="#devices">Devices</a><a href="#plans">Plans</a><a href="#accessories">Accessories</a><a href="#bundles">Bundles</a></div>
+    <div><h5>Support</h5><a href="#servicesHero">Self-service</a><a href="#">Coverage map</a><a href="#">Billing</a><a href="#">Contact</a></div>
+    <div><h5>Company</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Press</a><a href="#">Sustainability</a></div>
+  </div>
+  <div class="footer-fine">
+    <span>© 2026 iConnecTelco</span>
+    <span>v4.3.0 · Built on Azure</span>
+    <span><a href="csr.html" style="color:var(--muted);">CSR Desktop</a></span>
+  </div>
+  <p class="cognizant-attribution">Built by <strong>Cognizant</strong></p>
+</footer>
+
+<aside class="drawer" id="cartDrawer">
+  <div class="drawer-head"><h3>Your cart</h3><button class="icon-btn" onclick="closeCart()">✕</button></div>
+  <div class="drawer-body" id="cartBody"><p class="drawer-empty">Your cart is empty. Start with a device or a plan.</p></div>
+  <div class="drawer-foot" id="cartFoot" hidden>
+    <div class="cart-total"><span>Total</span><strong id="cartTotal">$0.00</strong></div>
+    <button class="btn-primary wide" onclick="checkout()">Checkout autonomously →</button>
+  </div>
+</aside>
+
+<div class="modal" id="flowModal">
+  <div class="modal-card">
+    <button class="icon-btn modal-close" onclick="closeFlow()">✕</button>
+    <div class="modal-body" id="flowBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="compareModal">
+  <div class="modal-card compare-card">
+    <button class="icon-btn modal-close" onclick="closeCompare()">✕</button>
+    <div id="compareBody"></div>
+  </div>
+</div>
+
+<!-- CHECKOUT PAGE (full-page, replaces modal) -->
+<div class="checkout-modal" id="checkoutModal">
+  <div class="checkout-page-wrap">
+    <div class="checkout-card">
+      <div class="checkout-head">
+        <h2 id="checkoutHeading">Checkout</h2>
+        <button class="icon-btn" onclick="closeCheckout()" aria-label="Return to catalog">✕</button>
+      </div>
+
+      <div class="step-indicator" id="stepIndicator">
+        <div class="step-dot active" data-step="1"><div class="bar"></div><div class="label">01 · Contact & address</div></div>
+        <div class="step-dot" data-step="2"><div class="bar"></div><div class="label">02 · Payment</div></div>
+        <div class="step-dot" data-step="3"><div class="bar"></div><div class="label">03 · Review</div></div>
+      </div>
+
+    <!-- STEP 1: Contact & Address -->
+    <div class="step-pane active" id="stepPane1">
+      <div class="account-toggle">
+        <button class="active" onclick="setAuthMode('signup')" id="tabSignup">New customer</button>
+        <button onclick="setAuthMode('signin')" id="tabSignin">I have an account</button>
+      </div>
+
+      <div id="signupFields">
+        <div class="signup-note">Create an <strong>iConnecTelco</strong> account with this order. You'll use it to manage plans, track shipments, and change service — all autonomously.</div>
+
+        <div class="form-section">
+          <div class="form-section-title">Your details</div>
+          <div class="field-row">
+            <div class="form-field">
+              <label>First name</label>
+              <input type="text" name="firstName" id="f-firstName" required/>
+            </div>
+            <div class="form-field">
+              <label>Last name</label>
+              <input type="text" name="lastName" id="f-lastName" required/>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="form-field">
+              <label>Email</label>
+              <input type="email" name="email" id="f-email" required/>
+            </div>
+            <div class="form-field">
+              <label>Mobile number</label>
+              <input type="tel" name="phone" id="f-phone" placeholder="(555) 000-0000" required/>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="form-field">
+              <label>Date of birth</label>
+              <input type="date" name="dob" id="f-dob" required/>
+            </div>
+            <div class="form-field">
+              <label>Password</label>
+              <input type="password" name="password" id="f-password" required/>
+              <div class="password-hint">Min. 8 characters</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Shipping address</div>
+          <div class="form-field">
+            <label>Street address</label>
+            <input type="text" name="street" id="f-street" required/>
+          </div>
+          <div class="field-row">
+            <div class="form-field">
+              <label>City</label>
+              <input type="text" name="city" id="f-city" required/>
+            </div>
+            <div class="form-field">
+              <label>State</label>
+              <select name="state" id="f-state" required>
+                <option value="">Select state</option>
+                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="form-field">
+              <label>ZIP code</label>
+              <input type="text" name="zip" id="f-zip" maxlength="10" required/>
+            </div>
+            <div class="form-field">
+              <label>Country</label>
+              <input type="text" name="country" id="f-country" value="United States" readonly/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="signinFields" style="display:none">
+        <div class="signup-note">Welcome back. For this demo, any email and password will work.</div>
+        <div class="form-field">
+          <label>Email or mobile</label>
+          <input type="text" id="f-signin-email" placeholder="you@example.com"/>
+        </div>
+        <div class="form-field">
+          <label>Password</label>
+          <input type="password" id="f-signin-password"/>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-ghost" onclick="closeCheckout()">Cancel</button>
+        <button class="btn-primary" onclick="validateAndNext(1)">Continue to payment →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Payment -->
+    <div class="step-pane" id="stepPane2">
+      <div class="form-section">
+        <div class="form-section-title">How you'd like to pay</div>
+        <div class="payment-methods">
+          <div class="pay-method selected" onclick="selectPayment('card')" id="pm-card">
+            <div class="pay-method-radio"></div>
+            <div class="pay-method-body">
+              <div class="pay-method-title">Credit or debit card</div>
+              <div class="pay-method-meta">Pay in full</div>
+            </div>
+            <div class="pay-method-icon">
+              <span style="background:#1a1f71">VISA</span>
+              <span style="background:#eb001b">MC</span>
+              <span style="background:#006fcf">AMEX</span>
+            </div>
+          </div>
+          <div class="pay-method" onclick="selectPayment('financing')" id="pm-financing">
+            <div class="pay-method-radio"></div>
+            <div class="pay-method-body">
+              <div class="pay-method-title">Finance the device — 0% APR</div>
+              <div class="pay-method-meta">24 or 36 months · no interest · no fees</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="cardFields" class="form-section">
+        <div class="form-section-title">Card details</div>
+        <div class="card-fields">
+          <div class="form-field">
+            <label>Card number</label>
+            <input type="text" name="cardNumber" id="f-cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" oninput="formatCardNumber(this)" required/>
+          </div>
+          <div class="field-row">
+            <div class="form-field">
+              <label>Expiry</label>
+              <input type="text" name="expiry" id="f-expiry" maxlength="5" placeholder="MM/YY" oninput="formatExpiry(this)" required/>
+            </div>
+            <div class="form-field">
+              <label>CVV</label>
+              <input type="text" name="cvv" id="f-cvv" maxlength="4" placeholder="123" required/>
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Name on card</label>
+            <input type="text" name="cardName" id="f-cardName" required/>
+          </div>
+        </div>
+      </div>
+
+      <div id="financingFields" class="form-section" style="display:none">
+        <div class="form-section-title">Financing term</div>
+        <div class="financing-options">
+          <div class="financing-option selected" data-months="24" onclick="selectFinancing(24)">
+            <div class="fo-term">24 months</div>
+            <div class="fo-rate">0% APR</div>
+            <div class="fo-monthly" id="fin-24">—</div>
+          </div>
+          <div class="financing-option" data-months="36" onclick="selectFinancing(36)">
+            <div class="fo-term">36 months</div>
+            <div class="fo-rate">0% APR</div>
+            <div class="fo-monthly" id="fin-36">—</div>
+          </div>
+        </div>
+        <div class="signup-note" style="margin-top:18px">Financing requires a soft credit check (no impact on your score). Monthly payment added to your plan bill.</div>
+
+        <div class="form-section-title" style="margin-top:24px">Card for monthly payments</div>
+        <div class="card-fields">
+          <div class="form-field">
+            <label>Card number</label>
+            <input type="text" id="f-finCardNumber" maxlength="19" placeholder="1234 5678 9012 3456" oninput="formatCardNumber(this)" required/>
+          </div>
+          <div class="field-row">
+            <div class="form-field">
+              <label>Expiry</label>
+              <input type="text" id="f-finExpiry" maxlength="5" placeholder="MM/YY" oninput="formatExpiry(this)" required/>
+            </div>
+            <div class="form-field">
+              <label>CVV</label>
+              <input type="text" id="f-finCvv" maxlength="4" placeholder="123" required/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <label class="same-as-shipping">
+          <input type="checkbox" id="f-billingSame" checked/>
+          <span>Billing address same as shipping</span>
+        </label>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-ghost" onclick="gotoStep(1)">← Back</button>
+        <button class="btn-primary" onclick="validateAndNext(2)">Review order →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Review -->
+    <div class="step-pane" id="stepPane3">
+      <div id="reviewBody"></div>
+
+      <div class="step-actions">
+        <button class="btn-ghost" onclick="gotoStep(2)">← Back</button>
+        <button class="btn-primary" id="submitOrderBtn" onclick="tryPlaceOrder()">Place order →</button>
+      </div>
+    </div>
+
+    </div><!-- /.checkout-card -->
+
+    <!-- Sticky order summary sidebar -->
+    <aside class="checkout-sidebar" id="checkoutSidebar">
+      <button class="sidebar-mobile-toggle" onclick="document.getElementById('checkoutSidebar').classList.toggle('collapsed')" aria-expanded="true">
+        <span><strong id="sidebarTotalMobile">Order summary</strong></span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="sidebar-head">
+        <span>Order summary</span>
+        <a href="#" onclick="event.preventDefault(); closeCheckout(); openCart(); return false;">Edit cart</a>
+      </div>
+      <div class="sidebar-items" id="sidebarItems"></div>
+      <div class="sidebar-totals" id="sidebarTotals"></div>
+    </aside>
+
+  </div><!-- /.checkout-page-wrap -->
+</div><!-- /.checkout-modal -->
+
+<!-- CROSS-SELL MODAL — shown on Place order click before submit -->
+<div class="xs-modal" id="xsModal" role="dialog" aria-labelledby="xsModalTitle" aria-modal="true">
+  <div class="xs-modal-card">
+    <div class="xs-modal-eyebrow"><span>One more thing</span></div>
+    <h2 class="xs-modal-title" id="xsModalTitle">Wait — <em>add these</em> before checkout?</h2>
+    <p class="xs-modal-sub" id="xsModalSub">These are popular with customers ordering what's in your cart.</p>
+    <div class="xs-modal-body" id="xsModalBody"></div>
+    <div class="xs-modal-actions">
+      <button class="btn-ghost" onclick="dismissCrossSellModal(false)">No thanks, place my order</button>
+      <button class="btn-primary" onclick="dismissCrossSellModal(true)">Continue checkout →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIGN-IN MODAL — three states: signin, forgot, reset-sent -->
+<div class="signin-modal" id="signinModal" role="dialog" aria-labelledby="signinTitle" aria-modal="true">
+  <div class="signin-card">
+    <button class="icon-btn signin-close" onclick="closeSignInModal()" aria-label="Close">✕</button>
+    <div id="signinBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="demo-badge" id="demoBadge" style="display:none">DEMO MODE · simulated API <a href="../index.html">← switch app</a></div>
+
+<script>
+/* =========================================================
+   API shim — simulates /api/* responses in demo mode only.
+   In production (deployed as an Azure Static Web App), the
+   real Azure Functions endpoints handle these routes and this
+   shim is bypassed.
+
+   Demo mode is active when:
+     1. The page is opened via file:// (opened directly from disk), OR
+     2. The URL contains ?demo=true, OR
+     3. The hostname is localhost or starts with 127./192.168.
+   ========================================================= */
+(function(){
+  const isDemoMode =
+    location.protocol === 'file:' ||
+    new URLSearchParams(location.search).has('demo') ||
+    ['localhost', '127.0.0.1'].includes(location.hostname) ||
+    location.hostname.startsWith('192.168.');
+
+  if (!isDemoMode) {
+    console.info('iConnecTelco: production mode (real API enabled)');
+    return;
+  }
+
+  const origFetch = window.fetch;
+  window.fetch = async function(url, opts){
+    if(typeof url !== 'string' || !url.startsWith('/api/')) return origFetch.apply(this, arguments);
+    const body = opts && opts.body ? JSON.parse(opts.body) : {};
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 900));
+    if(Math.random() < 0.08 && url === '/api/pega-case'){
+      return new Response(JSON.stringify({error:'Upstream Pega temporarily unavailable',recoverable:true}),{status:502,headers:{'Content-Type':'application/json'}});
+    }
+    let payload = {};
+    if(url === '/api/pega-case'){
+      payload = {caseID:'CT-'+Math.floor(Math.random()*900000+100000),status:'Resolved-Completed',eta:'Live in 8-12 minutes',simulated:true};
+    } else if(url === '/api/pega-order'){
+      payload = {orderId:'ORD-'+Date.now().toString(36).toUpperCase(),total:(body.items||[]).reduce((s,i)=>s+(i.price||0),0),itemCount:(body.items||[]).length,status:'Processing',estimatedDelivery:'Next business day',simulated:true};
+    } else if(url === '/api/catalog'){
+      // Let loadCatalog() fall through to embedded data
+      return new Response(JSON.stringify({}), {status:200, headers:{'Content-Type':'application/json'}});
+    }
+    return new Response(JSON.stringify(payload),{status:200,headers:{'Content-Type':'application/json'}});
+  };
+  console.info('%c iConnecTelco Demo Mode ', 'background:#c2410c;color:#fff;padding:2px 8px;border-radius:3px;font-weight:bold;', 'API calls simulated locally.');
+  // Reveal the demo badge
+  document.addEventListener('DOMContentLoaded', () => {
+    const badge = document.getElementById('demoBadge');
+    if (badge) badge.style.display = 'flex';
+  });
+})();
+
+/* Device catalog — 8 real phones */
+const devices = [
+  {
+    "id": "iphone-17-pro",
+    "brand": "Apple",
+    "name": "iPhone 17 Pro",
+    "os": "iOS",
+    "form": "slab",
+    "displayIn": 6.3,
+    "displayCat": "compact",
+    "storage": 256,
+    "storageOptions": [
+      256,
+      512,
+      1024
+    ],
+    "price": 1099,
+    "strike": null,
+    "monthly": 45.79,
+    "features": [
+      "A19 Pro chip",
+      "Aluminum unibody",
+      "48 MP Fusion camera",
+      "8\u00d7 telephoto zoom",
+      "Ceramic Shield 2"
+    ],
+    "colors": [
+      "Cosmic Orange",
+      "Deep Blue",
+      "Silver"
+    ],
+    "colorHex": [
+      "#d56b3b",
+      "#2c3e5b",
+      "#d8d8d8"
+    ],
+    "rating": 4.8,
+    "reviews": 5421,
+    "availability": "in-stock",
+    "stock": "high",
+    "badge": "New",
+    "launched": 2025,
+    "fallbackAccent": "#d56b3b",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/IPhone_17_Pro_Vector.svg/274px-IPhone_17_Pro_Vector.svg.png"
+  },
+  {
+    "id": "iphone-17-pro-max",
+    "brand": "Apple",
+    "name": "iPhone 17 Pro Max",
+    "os": "iOS",
+    "form": "slab",
+    "displayIn": 6.9,
+    "displayCat": "large",
+    "storage": 256,
+    "storageOptions": [
+      256,
+      512,
+      1024,
+      2048
+    ],
+    "price": 1199,
+    "strike": null,
+    "monthly": 49.96,
+    "features": [
+      "A19 Pro chip",
+      "Largest iPhone battery ever",
+      "48 MP Fusion camera",
+      "8\u00d7 telephoto zoom",
+      "Vapor-chamber cooling"
+    ],
+    "colors": [
+      "Cosmic Orange",
+      "Deep Blue",
+      "Silver"
+    ],
+    "colorHex": [
+      "#d56b3b",
+      "#2c3e5b",
+      "#d8d8d8"
+    ],
+    "rating": 4.9,
+    "reviews": 4187,
+    "availability": "in-stock",
+    "stock": "high",
+    "badge": null,
+    "launched": 2025,
+    "fallbackAccent": "#2c3e5b",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/IPhone_17_Pro_Max_Vector.svg/290px-IPhone_17_Pro_Max_Vector.svg.png"
+  },
+  {
+    "id": "galaxy-s26-ultra",
+    "brand": "Samsung",
+    "name": "Galaxy S26 Ultra",
+    "os": "Android",
+    "form": "slab",
+    "displayIn": 6.9,
+    "displayCat": "large",
+    "storage": 256,
+    "storageOptions": [
+      256,
+      512,
+      1024
+    ],
+    "price": 1299.99,
+    "strike": null,
+    "monthly": 54.17,
+    "features": [
+      "Snapdragon 8 Elite Gen 5",
+      "200 MP camera f/1.4",
+      "5\u00d7 periscope telephoto",
+      "Privacy Display",
+      "Galaxy AI \u00b7 One UI 8.5"
+    ],
+    "colors": [
+      "Black",
+      "Cobalt Violet",
+      "Sky Blue",
+      "White"
+    ],
+    "colorHex": [
+      "#1a1a1a",
+      "#4a3a6b",
+      "#a8c4dc",
+      "#f5f5f5"
+    ],
+    "rating": 4.7,
+    "reviews": 2843,
+    "availability": "in-stock",
+    "stock": "high",
+    "badge": "New",
+    "launched": 2026,
+    "fallbackAccent": "#4a3a6b",
+    "image": "https://images.samsung.com/is/image/samsung/p6pim/us/sm-s948uzvaxaa/gallery/us-galaxy-s26-ultra-sm-s948-sm-s948uzvaxaa-thumb-552321011?$216_216_PNG$"
+  },
+  {
+    "id": "galaxy-s25-ultra",
+    "brand": "Samsung",
+    "name": "Galaxy S25 Ultra",
+    "os": "Android",
+    "form": "slab",
+    "displayIn": 6.9,
+    "displayCat": "large",
+    "storage": 256,
+    "storageOptions": [
+      256,
+      512,
+      1024
+    ],
+    "price": 999.99,
+    "strike": 1299.99,
+    "monthly": 41.67,
+    "features": [
+      "Snapdragon 8 Elite for Galaxy",
+      "200 MP quad camera",
+      "S Pen included",
+      "Titanium frame",
+      "7 years of updates"
+    ],
+    "colors": [
+      "Titanium Black",
+      "Titanium Gray",
+      "Titanium Silverblue",
+      "Titanium Whitesilver"
+    ],
+    "colorHex": [
+      "#1f1f1f",
+      "#4e4e4e",
+      "#8ba4b8",
+      "#d9d9d9"
+    ],
+    "rating": 4.7,
+    "reviews": 8924,
+    "availability": "in-stock",
+    "stock": "high",
+    "badge": "Sale",
+    "launched": 2025,
+    "fallbackAccent": "#4e4e4e",
+    "image": "https://images.samsung.com/is/image/samsung/p6pim/us/sm-s938uzkaxaa/gallery/us-galaxy-s25-ultra-s938-sm-s938uzkaxaa-thumb-544179620?$216_216_PNG$"
+  },
+  {
+    "id": "pixel-10-pro-xl",
+    "brand": "Google",
+    "name": "Pixel 10 Pro XL",
+    "os": "Android",
+    "form": "slab",
+    "displayIn": 6.8,
+    "displayCat": "standard",
+    "storage": 256,
+    "storageOptions": [
+      256,
+      512,
+      1024
+    ],
+    "price": 1199,
+    "strike": null,
+    "monthly": 49.96,
+    "features": [
+      "Tensor G5 \u00b7 Gemini Nano",
+      "50 MP + 48 MP ultrawide + 48 MP 5\u00d7 tele",
+      "Pro Res Zoom up to 100\u00d7",
+      "Qi2.2 Pixelsnap \u00b7 25 W wireless",
+      "7 years of updates"
+    ],
+    "colors": [
+      "Moonstone",
+      "Obsidian",
+      "Porcelain",
+      "Jade"
+    ],
+    "colorHex": [
+      "#c7c4bc",
+      "#1d1d1b",
+      "#e8e3d8",
+      "#6a8d6b"
+    ],
+    "rating": 4.6,
+    "reviews": 3156,
+    "availability": "in-stock",
+    "stock": "high",
+    "badge": null,
+    "launched": 2025,
+    "fallbackAccent": "#c7c4bc",
+    "image": "https://lh3.googleusercontent.com/FU7YCyl2NXCY4Q8_fCz9cdTPCaALCJw6ziU2v2iEBuQHjnQNdMPmUGlnFNJqjT9gH8wjzDsJm7mYPKhZ=s300"
+  },
+  {
+    "id": "pixel-10-pro",
+    "brand": "Google",
+    "name": "Pixel 10 Pro",
+    "os": "Android",
+    "form": "slab",
+    "displayIn": 6.3,
+    "displayCat": "compact",
+    "storage": 128,
+    "storageOptions": [
+      128,
+      256,
+      512,
+      1024
+    ],
+    "price": 999,
+    "strike": null,
+    "monthly": 41.63,
+    "features": [
+      "Tensor G5 \u00b7 Gemini Nano",
+      "50 MP wide triple camera",
+      "Pro Res Zoom up to 100\u00d7",
+      "Qi2 wireless \u00b7 15 W",
+      "Thermometer on camera bar"
+    ],
+    "colors": [
+      "Obsidian",
+      "Porcelain",
+      "Jade",
+      "Moonstone"
+    ],
+    "colorHex": [
+      "#1d1d1b",
+      "#e8e3d8",
+      "#6a8d6b",
+      "#c7c4bc"
+    ],
+    "rating": 4.6,
+    "reviews": 2894,
+    "availability": "in-stock",
+    "stock": "high",
+    "badge": null,
+    "launched": 2025,
+    "fallbackAccent": "#6a8d6b",
+    "image": "https://lh3.googleusercontent.com/BJMQYwSSmAtCAYPNABrQvB4aKSrBmOklNjT8UrjrXNEYHtR-Ns_oBHEvBrt1tlGnTz2B6mMRDKMLcVw=s300"
+  },
+  {
+    "id": "razr-ultra-2025",
+    "brand": "Motorola",
+    "name": "Razr Ultra 2025",
+    "os": "Android",
+    "form": "foldable",
+    "displayIn": 7.0,
+    "displayCat": "large",
+    "storage": 512,
+    "storageOptions": [
+      512,
+      1024
+    ],
+    "price": 1299,
+    "strike": null,
+    "monthly": 54.13,
+    "features": [
+      "Snapdragon 8 Elite",
+      "7.0\" foldable pOLED",
+      "4\" cover display",
+      "50 MP main + 50 MP ultrawide",
+      "Moto AI \u00b7 premium finishes"
+    ],
+    "colors": [
+      "Scarab (Wood)",
+      "Mountain Trail",
+      "Cabaret",
+      "Rio Red"
+    ],
+    "colorHex": [
+      "#5b4c3a",
+      "#7a6d56",
+      "#3d4a5c",
+      "#a83a3a"
+    ],
+    "rating": 4.4,
+    "reviews": 1247,
+    "availability": "in-stock",
+    "stock": "low",
+    "badge": "Foldable",
+    "launched": 2025,
+    "fallbackAccent": "#a83a3a",
+    "image": "https://motorolaus.vtexassets.com/arquivos/ids/169411-800-auto"
+  },
+  {
+    "id": "oneplus-15",
+    "brand": "OnePlus",
+    "name": "OnePlus 15",
+    "os": "Android",
+    "form": "slab",
+    "displayIn": 6.78,
+    "displayCat": "standard",
+    "storage": 256,
+    "storageOptions": [
+      256,
+      512,
+      1024
+    ],
+    "price": 999,
+    "strike": null,
+    "monthly": 41.63,
+    "features": [
+      "Snapdragon 8 Elite Gen 5",
+      "7300 mAh silicon-carbon battery",
+      "50 MP Sony IMX906 triple",
+      "Micro-Arc Oxidization frame",
+      "100 W SuperVOOC charging"
+    ],
+    "colors": [
+      "Absolute Black",
+      "Misty Silver",
+      "Infinite Black"
+    ],
+    "colorHex": [
+      "#0c0c0c",
+      "#b8b8bc",
+      "#2a2a2a"
+    ],
+    "rating": 4.5,
+    "reviews": 687,
+    "availability": "preorder",
+    "stock": "preorder",
+    "badge": "Pre-order",
+    "launched": 2025,
+    "fallbackAccent": "#0c0c0c",
+    "image": "https://image01.oneplus.net/ebp/202510/22/1-m00-7b-19-ckvawwjxzcqatvwqaaecwlbfkuk739.png"
+  }
+];
+
+/* Plans */
+const mobilePlans = [
+  {id:'pl-essential',name:'Essential',price:25,period:'per line / month',meta:'For lighter users',features:['Unlimited talk & text','5 GB high-speed data','5G where available','Mexico & Canada roaming','No contract']},
+  {id:'pl-plus',name:'Plus',price:45,period:'per line / month',meta:'Most popular',featured:true,ribbon:'Popular',features:['Unlimited talk, text & data','50 GB premium 5G','10 GB mobile hotspot','Global roaming in 120+ countries','Standard streaming','Free subscription perk']},
+  {id:'pl-ultra',name:'Ultra',price:75,period:'per line / month',meta:'All the things',features:['Truly unlimited premium 5G','100 GB hotspot','4K streaming included','Global roaming unlimited','Two premium subscriptions','Device protection included']}
+];
+const internetPlans = [
+  {id:'ip-start',name:'Fiber Start',price:45,period:'per month',meta:'For 1–2 devices',features:['300 Mbps symmetrical','No data cap','Wi-Fi 6 router included','No install fee','30-day trial']},
+  {id:'ip-pro',name:'Fiber Pro',price:75,period:'per month',meta:'Work-from-home',featured:true,ribbon:'Best value',features:['1 Gbps symmetrical','No data cap','Wi-Fi 6E mesh (2 nodes)','Priority support','Static IP option','Zero throttling']},
+  {id:'ip-max',name:'Fiber Max',price:110,period:'per month',meta:'Streamers & studios',features:['5 Gbps symmetrical','No data cap','Wi-Fi 7 mesh (3 nodes)','Dedicated support line','Static IP included','99.99% SLA']}
+];
+const prepaidPlans = [
+  {id:'pp-7',name:'Pay as you go',price:15,period:'7 days',meta:'Travel & short-term',features:['Unlimited talk & text','5 GB data','Activate instantly','No credit check']},
+  {id:'pp-30',name:'Monthly prepaid',price:30,period:'30 days',meta:'No commitment',featured:true,ribbon:'Top up anytime',features:['Unlimited talk, text, data','15 GB high-speed','Auto-renew optional','Keep balance 60 days']},
+  {id:'pp-365',name:'Annual prepaid',price:240,period:'365 days',meta:'Lock in the year',features:['Equivalent to $20/month','12 GB / mo high-speed','No surprises','Rollover data']}
+];
+
+/* SVG phone fallback */
+function svgFallback(accent){
+  const a = accent.replace('#','');
+  return `<svg class="svg-fallback" viewBox="0 0 200 340" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g${a}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${accent}" stop-opacity="0.95"/><stop offset="1" stop-color="${accent}" stop-opacity="0.7"/></linearGradient></defs><rect x="40" y="10" width="120" height="320" rx="26" fill="#14110f"/><rect x="46" y="16" width="108" height="308" rx="22" fill="url(#g${a})"/><rect x="78" y="20" width="44" height="10" rx="5" fill="#14110f"/><rect x="55" y="34" width="90" height="260" rx="4" fill="#ffffff" opacity="0.08"/></svg>`;
+}
+
+/* Filter state */
+const filterState = {brand:'all',brands:new Set(),os:new Set(),displays:new Set(),forms:new Set(),priceRanges:new Set(),minRating:0,sort:'featured'};
+const compareSet = new Set();
+const favSet = new Set();
+
+function renderStars(r){
+  const f=Math.floor(r),h=r-f>=0.5,e=5-f-(h?1:0);
+  return '★'.repeat(f)+(h?'<span style="position:relative;display:inline-block;width:1em;"><span style="position:absolute;overflow:hidden;width:50%;">★</span><span class="star-empty">☆</span></span>':'')+'<span class="star-empty">'+'☆'.repeat(e)+'</span>';
+}
+function priceIn(p,r){return r==='0-1000'?p<1000:r==='1000-1300'?p>=1000&&p<1300:r==='1300+'?p>=1300:true}
+function getFiltered(){
+  let out = devices.filter(d=>{
+    if(filterState.brand!=='all' && d.brand!==filterState.brand) return false;
+    if(filterState.brands.size && !filterState.brands.has(d.brand)) return false;
+    if(filterState.os.size && !filterState.os.has(d.os)) return false;
+    if(filterState.displays.size && !filterState.displays.has(d.displayCat)) return false;
+    if(filterState.forms.size && !filterState.forms.has(d.form)) return false;
+    if(filterState.priceRanges.size && ![...filterState.priceRanges].some(r=>priceIn(d.price,r))) return false;
+    if(filterState.minRating && d.rating<filterState.minRating) return false;
+    return true;
+  });
+  switch(filterState.sort){
+    case 'price-asc': out.sort((a,b)=>a.price-b.price); break;
+    case 'price-desc': out.sort((a,b)=>b.price-a.price); break;
+    case 'rating': out.sort((a,b)=>b.rating-a.rating||b.reviews-a.reviews); break;
+    case 'newest': out.sort((a,b)=>b.launched-a.launched); break;
+  }
+  return out;
+}
+
+function renderDevices(){
+  const grid = document.getElementById('deviceGrid');
+  const list = getFiltered();
+  document.getElementById('resultsCount').textContent = `${list.length} ${list.length===1?'result':'results'}`;
+  if(!list.length){
+    grid.innerHTML = `<div class="no-results"><h3>No phones match your filters</h3><p>Try loosening a constraint.</p><button class="btn-ghost" onclick="clearFilters()">Clear all filters</button></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(d=>{
+    const availLabel = {'in-stock':'In stock','preorder':'Pre-order · ships in 2 weeks','ship-today':'Ships today'}[d.availability];
+    const availClass = d.stock==='low'?'low':(d.availability==='preorder'?'preorder':'');
+    const colorDots = d.colorHex.slice(0,4).map((hex,i)=>`<span class="dot ${i===0?'selected':''}" style="background:${hex}" title="${d.colors[i]}"></span>`).join('') + (d.colors.length>4?`<span class="more-count">+${d.colors.length-4}</span>`:'');
+    const badgeClass = d.badge==='Sale'?'sale':(d.badge==='Pre-order'?'preorder':'');
+    const fallbackId = 'fb-'+d.id;
+    return `
+      <article class="device-card" data-id="${d.id}">
+        ${d.badge?`<span class="badge ${badgeClass}">${d.badge}</span>`:''}
+        <button class="fav ${favSet.has(d.id)?'active':''}" onclick="event.stopPropagation(); toggleFav('${d.id}', this)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="${favSet.has(d.id)?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <div class="device-image">
+          <img src="${d.image}" alt="${d.brand} ${d.name}" onerror="this.style.display='none'; document.getElementById('${fallbackId}').style.display='block';"/>
+          <div id="${fallbackId}" style="display:none;width:60%;position:relative;z-index:1;">${svgFallback(d.fallbackAccent)}</div>
+        </div>
+        <div class="device-body">
+          <div class="device-brand">${d.brand} · ${d.os}</div>
+          <div class="device-name">${d.name}</div>
+          <div class="device-rating"><span class="stars">${renderStars(d.rating)}</span><span class="rating-count">(${d.reviews.toLocaleString()})</span></div>
+          <div class="color-dots">${colorDots}</div>
+          <div class="device-features">${d.features.slice(0,3).map(f=>`<span>${f}</span>`).join('')}</div>
+          <div class="device-pricing">
+            <div class="price-label">Starts at</div>
+            <div class="price-main">
+              <span class="price">$${d.price.toLocaleString()}</span>
+              ${d.strike?`<span class="price-strike">$${d.strike.toLocaleString()}</span>`:''}
+              <span class="monthly">or $${d.monthly.toFixed(2)}/mo</span>
+            </div>
+            <div class="availability-chip ${availClass}">${availLabel}${d.stock==='low'?' · only a few left':''}</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <label class="compare-check" onclick="event.stopPropagation()">
+            <input type="checkbox" ${compareSet.has(d.id)?'checked':''} onchange="toggleCompare('${d.id}', this.checked, event)"/>
+            <span>Compare</span>
+          </label>
+          <button class="add-btn" onclick="event.stopPropagation(); addToCart('${d.id}')">Add to cart</button>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function renderPlans(type='mobile'){
+  const grid = document.getElementById('planGrid');
+  const src = {mobile:mobilePlans,internet:internetPlans,prepaid:prepaidPlans}[type];
+  grid.innerHTML = src.map(p=>`
+    <article class="plan-card ${p.featured?'featured':''}">
+      ${p.ribbon?`<span class="ribbon">${p.ribbon}</span>`:''}
+      <div class="plan-name">${p.name}</div>
+      <div class="plan-meta">${p.meta}</div>
+      <div class="plan-price">$${p.price}<sub>${p.period.includes('day')?'':'/mo'}</sub></div>
+      <div class="plan-period">${p.period}</div>
+      <ul class="plan-features">${p.features.map(f=>`<li>${f}</li>`).join('')}</ul>
+      <button class="plan-btn" onclick="addPlanToCart('${p.id}','${p.name}',${p.price})">Choose ${p.name}</button>
+    </article>
+  `).join('');
+}
+
+function toggleFav(id, btn){
+  if(favSet.has(id)){favSet.delete(id);btn.classList.remove('active');btn.querySelector('svg').setAttribute('fill','none');}
+  else{favSet.add(id);btn.classList.add('active');btn.querySelector('svg').setAttribute('fill','currentColor');toast('Saved to favorites');}
+}
+
+function toggleCompare(id, checked, ev){
+  if(checked){
+    if(compareSet.size>=4){toast('Compare up to 4 phones at a time');if(ev)ev.target.checked=false;return;}
+    compareSet.add(id);
+  } else compareSet.delete(id);
+  renderCompareTray();
+}
+function renderCompareTray(){
+  const tray = document.getElementById('compareTray');
+  const items = document.getElementById('compareItems');
+  if(!compareSet.size){tray.hidden = true; return;}
+  tray.hidden = false;
+  items.innerHTML = [...compareSet].map(id=>{
+    const d = devices.find(x=>x.id===id);
+    return `<span class="compare-chip">${d.brand} ${d.name}<button onclick="removeCompareItem('${id}')">✕</button></span>`;
+  }).join('');
+}
+function removeCompareItem(id){
+  compareSet.delete(id);
+  const cb = document.querySelector(`[data-id="${id}"] .compare-check input`);
+  if(cb) cb.checked = false;
+  renderCompareTray();
+}
+function clearCompare(){
+  compareSet.clear();
+  document.querySelectorAll('.compare-check input').forEach(i=>i.checked=false);
+  renderCompareTray();
+}
+function openCompare(){
+  if(compareSet.size<2){toast('Pick at least 2 phones to compare');return;}
+  const list = [...compareSet].map(id=>devices.find(d=>d.id===id));
+  const body = document.getElementById('compareBody');
+  body.innerHTML = `
+    <div class="eyebrow"><span class="dot"></span><span>Compare · ${list.length} phones</span></div>
+    <h2 style="font-family:var(--ff-display);font-size:40px;font-weight:400;letter-spacing:-0.02em;margin-bottom:10px;">Side by side</h2>
+    <table class="compare-table">
+      <thead><tr><th></th>${list.map(d=>`<th>
+        <div class="cmp-img"><img src="${d.image}" onerror="this.style.display='none'"/></div>
+        <div class="cmp-brand">${d.brand}</div>
+        <div class="cmp-name">${d.name}</div>
+      </th>`).join('')}</tr></thead>
+      <tbody>
+        <tr><th>Price</th>${list.map(d=>`<td><strong>$${d.price.toLocaleString()}</strong><br/><span style="color:var(--muted);font-size:11px;font-family:var(--ff-mono)">or $${d.monthly.toFixed(2)}/mo</span></td>`).join('')}</tr>
+        <tr><th>Rating</th>${list.map(d=>`<td><span class="stars">${renderStars(d.rating)}</span> ${d.rating} (${d.reviews.toLocaleString()})</td>`).join('')}</tr>
+        <tr><th>OS</th>${list.map(d=>`<td>${d.os}</td>`).join('')}</tr>
+        <tr><th>Display</th>${list.map(d=>`<td>${d.displayIn}"</td>`).join('')}</tr>
+        <tr><th>Form factor</th>${list.map(d=>`<td style="text-transform:capitalize">${d.form}</td>`).join('')}</tr>
+        <tr><th>Storage</th>${list.map(d=>`<td>${d.storageOptions.map(s=>s>=1024?(s/1024)+' TB':s+' GB').join(' · ')}</td>`).join('')}</tr>
+        <tr><th>Key features</th>${list.map(d=>`<td>${d.features.join('<br/>')}</td>`).join('')}</tr>
+        <tr><th>Colors</th>${list.map(d=>`<td>${d.colorHex.map((hex,i)=>`<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${hex};margin-right:4px;vertical-align:middle;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.1)"></span>`).join('')}<br/><span style="font-size:11px;color:var(--muted)">${d.colors.join(', ')}</span></td>`).join('')}</tr>
+        <tr><th></th>${list.map(d=>`<td><button class="btn-primary" style="width:100%;padding:10px" onclick="addToCart('${d.id}');closeCompare();">Add to cart</button></td>`).join('')}</tr>
+      </tbody>
+    </table>
+  `;
+  document.getElementById('compareModal').classList.add('open');
+}
+function closeCompare(){document.getElementById('compareModal').classList.remove('open');}
+
+function toggleFilter(btn){btn.parentElement.classList.toggle('collapsed');}
+function applyFilters(){
+  filterState.brands = new Set([...document.querySelectorAll('.f-brand:checked')].map(i=>i.value));
+  filterState.os = new Set([...document.querySelectorAll('.f-os:checked')].map(i=>i.value));
+  filterState.displays = new Set([...document.querySelectorAll('.f-display:checked')].map(i=>i.value));
+  filterState.forms = new Set([...document.querySelectorAll('.f-form:checked')].map(i=>i.value));
+  filterState.priceRanges = new Set([...document.querySelectorAll('.f-price:checked')].map(i=>i.value));
+  const r = document.querySelector('.f-rating:checked');
+  filterState.minRating = r ? parseFloat(r.value) : 0;
+  filterState.sort = document.getElementById('sortBy').value;
+  renderDevices();
+}
+function clearFilters(){
+  document.querySelectorAll('.filter-rail input').forEach(i=>i.checked=false);
+  document.querySelectorAll('.brand-pill').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.brand-pill[data-brand="all"]').classList.add('active');
+  filterState.brand = 'all';
+  document.getElementById('sortBy').value = 'featured';
+  applyFilters();
+  toast('Filters cleared');
+}
+
+document.addEventListener('click', e=>{
+  if(e.target.matches('[data-brand]')){
+    document.querySelectorAll('[data-brand]').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    filterState.brand = e.target.dataset.brand;
+    renderDevices();
+  }
+  if(e.target.matches('[data-tab]')){
+    document.querySelectorAll('[data-tab]').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    renderPlans(e.target.dataset.tab);
+  }
+});
+document.addEventListener('change', e=>{if(e.target.closest('.filter-rail')) applyFilters();});
+
+/* Cart */
+const cart = [];
+function addToCart(id){
+  const d = devices.find(x=>x.id===id);
+  if(!d) return;
+  cart.push({...d, type:'device', _key:Date.now()+Math.random()});
+  updateCartUI();
+  toast(`${d.brand} ${d.name} added to cart`);
+}
+function addPlanToCart(id, name, price){
+  cart.push({id, name, price, type:'plan', _key:Date.now()+Math.random()});
+  updateCartUI();
+  toast(`${name} plan added to cart`);
+}
+function removeFromCart(key){
+  const idx = cart.findIndex(c=>c._key==key);
+  if(idx>-1){cart.splice(idx,1); updateCartUI();}
+}
+function updateCartUI(){
+  document.getElementById('cartBadge').textContent = cart.length;
+  const body = document.getElementById('cartBody');
+  const foot = document.getElementById('cartFoot');
+  if(!cart.length){
+    body.innerHTML = '<p class="drawer-empty">Your cart is empty. Start with a device or a plan.</p>';
+    foot.hidden = true;
+    return;
+  }
+  const itemsHtml = cart.map(c=>`
+    <div class="cart-item">
+      <div class="cart-item-img">${c.image?`<img src="${c.image}" onerror="this.style.display='none'"/>`:'<svg viewBox="0 0 40 40"><rect x="6" y="6" width="28" height="28" rx="4" fill="#c2410c" opacity="0.8"/></svg>'}</div>
+      <div>
+        <div class="cart-item-name">${c.brand?c.brand+' '+c.name:c.name}</div>
+        <div class="cart-item-meta">${c.type}${c.monthly?' · $'+c.monthly.toFixed(2)+'/mo':''}</div>
+        <button class="cart-item-remove" onclick="removeFromCart('${c._key}')">Remove</button>
+      </div>
+      <div class="cart-item-price">$${(c.price||0).toLocaleString()}</div>
+    </div>
+  `).join('');
+  body.innerHTML = itemsHtml + renderCrossSell();
+  const total = cart.reduce((s,c)=>s+(c.price||0),0);
+  document.getElementById('cartTotal').textContent = '$'+total.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  foot.hidden = false;
+  // If checkout is open, refresh its sidebar too
+  if(document.body.classList.contains('checkout-mode')){
+    renderCheckoutSidebar();
+  }
+  // If the place-order cross-sell modal is open, refresh its body so just-added
+  // categories disappear from the pitch list
+  const xs = document.getElementById('xsModal');
+  if(xs && xs.classList.contains('open')){
+    refreshCrossSellModal();
+  }
+}
+
+/* Refresh the cross-sell modal body without re-opening it */
+function refreshCrossSellModal(){
+  const body = document.getElementById('xsModalBody');
+  if(!body) return;
+  const types = new Set(cart.map(c => c.type));
+  const hasBundle = types.has('bundle');
+  const hasDevice = types.has('device');
+  const hasPlan = types.has('plan');
+  const hasAccessory = types.has('accessory');
+
+  let html = '';
+  if(hasBundle && !hasAccessory){
+    html = crossSellGroup('accessory', '<em>3 in 4 buyers</em> grab earbuds — your phone deserves them.', 'Pair with audio');
+  } else {
+    if(!hasPlan) html += crossSellGroup('plan', '<em>95% of customers</em> add a plan — save $30/mo when bundled.', 'Pick a plan');
+    if(!hasDevice) html += crossSellGroup('device', 'Pair with a phone — <em>0% APR</em> for 24 or 36 months.', 'Add a device');
+    if(!hasAccessory) html += crossSellGroup('accessory', '<em>3 in 4 buyers</em> grab earbuds — your phone deserves them.', 'Add accessories');
+    if(!hasBundle) html += crossSellGroup('bundle', 'Save up to <em>$680/yr</em> when you bundle.', 'Or go all-in');
+  }
+  if(!html){
+    // Nothing left to suggest — show success state and proceed
+    body.innerHTML = `<div style="text-align:center;padding:20px 0">
+      <div style="font-family:var(--ff-display);font-size:22px;margin-bottom:8px">All set.</div>
+      <p style="color:var(--ink-soft);font-size:14px">Your cart looks complete.</p>
+    </div>`;
+  } else {
+    body.innerHTML = html;
+  }
+}
+
+/* =========================================================
+   CROSS-SELL — inline below cart items.
+   Suggests categories not already in cart.
+   ========================================================= */
+function renderCrossSell(){
+  // What's already in cart
+  const types = new Set(cart.map(c => c.type));
+  const hasBundle = types.has('bundle');
+  const hasDevice = types.has('device');
+  const hasPlan = types.has('plan');
+  const hasAccessory = types.has('accessory');
+
+  // If all 4 categories present, hide
+  if(hasDevice && hasPlan && hasAccessory && hasBundle) return '';
+
+  // Special case: bundle covers device + plan + internet, so only suggest accessories
+  if(hasBundle && !hasAccessory){
+    return crossSellGroup('accessory', '3 in 4 buyers grab earbuds — your phone deserves them.', 'Pair with audio');
+  }
+  if(hasBundle) return ''; // bundle + accessory already, nothing to push
+
+  // Standard logic: suggest the missing categories
+  let html = '';
+  if(!hasPlan){
+    html += crossSellGroup('plan', '95% of customers add a plan — <em>save $30/mo</em> when bundled.', 'Pick a plan');
+  }
+  if(!hasDevice){
+    html += crossSellGroup('device', 'Pair with a phone — <em>0% APR</em> for 24 or 36 months.', 'Add a device');
+  }
+  if(!hasAccessory){
+    html += crossSellGroup('accessory', '3 in 4 buyers grab earbuds — your phone deserves them.', 'Add accessories');
+  }
+  if(!hasBundle){
+    html += crossSellGroup('bundle', 'Save up to <em>$680/yr</em> when you bundle.', 'Or go all-in');
+  }
+  return html ? `<div class="crossell">${html}</div>` : '';
+}
+
+function crossSellGroup(category, pitchHtml, label){
+  // Pick 2 items per category
+  let picks = [];
+  if(category === 'plan'){
+    picks = mobilePlans.slice(0, 2).map(p => ({
+      kind: 'plan', id: p.id, name: p.name + ' plan', meta: '$' + p.price + '/mo',
+      addFn: `addPlanToCart('${p.id}','${p.name}',${p.price})`,
+      img: '<svg viewBox="0 0 40 40"><rect x="6" y="6" width="28" height="28" rx="4" fill="#c2410c" opacity="0.8"/><text x="20" y="25" text-anchor="middle" font-family="monospace" font-size="9" fill="#fff" font-weight="700">5G</text></svg>'
+    }));
+  } else if(category === 'device'){
+    // Pick mid-range and entry options to feel approachable
+    const ids = ['pixel-10-pro', 'oneplus-15'];
+    picks = ids.map(id => devices.find(d => d.id === id)).filter(Boolean).map(d => ({
+      kind: 'device', id: d.id, name: d.brand + ' ' + d.name, meta: '$' + d.price.toLocaleString() + ' · or $' + d.monthly.toFixed(2) + '/mo',
+      addFn: `addToCart('${d.id}')`,
+      imgUrl: d.image
+    }));
+  } else if(category === 'accessory'){
+    const ids = ['airpods-pro-3', 'galaxy-buds-3-pro'];
+    picks = ids.map(id => accessories.find(a => a.id === id)).filter(Boolean).map(a => ({
+      kind: 'accessory', id: a.id, name: a.brand + ' ' + a.name, meta: '$' + a.price,
+      addFn: `addAccessoryToCart('${a.id}')`,
+      imgUrl: a.image
+    }));
+  } else if(category === 'bundle'){
+    picks = bundles.slice(0, 2).map(b => ({
+      kind: 'bundle', id: b.id, name: b.name, meta: '$' + b.price + '/mo · ' + b.save,
+      addFn: `addBundleToCart('${b.id}')`,
+      bundleCls: b.cls
+    }));
+  }
+
+  if(!picks.length) return '';
+
+  return `
+    <div class="crossell-group">
+      <div class="crossell-pitch">${pitchHtml}</div>
+      <div class="crossell-sub">${label}</div>
+      ${picks.map(p => `
+        <div class="crossell-card">
+          <div class="crossell-card-img${p.kind === 'bundle' ? ' bundle ' + (p.bundleCls || '') : ''}">
+            ${p.imgUrl ? `<img src="${p.imgUrl}" onerror="this.style.display='none'"/>` : (p.img || '')}
+          </div>
+          <div>
+            <div class="crossell-name">${p.name}</div>
+            <div class="crossell-meta">${p.meta}</div>
+          </div>
+          <button class="crossell-add" onclick="${p.addFn}">+ Add</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+function openCart(){document.getElementById('cartDrawer').classList.add('open');}
+function closeCart(){document.getElementById('cartDrawer').classList.remove('open');}
+
+async function checkout(){
+  if(!cart.length) return;
+  // Open the multi-step checkout modal instead of firing directly
+  closeCart();
+  openCheckout();
+}
+
+/* =========================================================
+   CHECKOUT FLOW — 3 steps, sign-up/sign-in, card/financing,
+   review, then POST consolidated payload to Pega.
+   ========================================================= */
+let checkoutState = {
+  step: 1,
+  authMode: 'signup',
+  paymentMethod: 'card',
+  financingMonths: 24,
+  billingSameAsShipping: true,
+  customer: {},
+  shipping: {},
+  payment: {}
+};
+
+function openCheckout(){
+  checkoutState.step = 1;
+  xsModalShown = false; // fresh checkout = modal eligible to show once
+  gotoStep(1);
+  document.body.classList.add('checkout-mode');
+  document.getElementById('checkoutModal').classList.add('open');
+  // Push history state so browser back returns to catalog
+  if(!location.hash.startsWith('#checkout')){
+    history.pushState({ checkout: true }, '', '#checkout');
+  }
+  // Update financing monthly estimates based on cart total
+  updateFinancingEstimates();
+  // Render sidebar
+  renderCheckoutSidebar();
+  // Scroll to top of page
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function closeCheckout(){
+  document.body.classList.remove('checkout-mode');
+  document.body.classList.remove('checkout-success');
+  document.getElementById('checkoutModal').classList.remove('open');
+  // Pop history if we're on #checkout
+  if(location.hash === '#checkout'){
+    history.back();
+  }
+}
+// Listen for browser back/forward
+window.addEventListener('popstate', (e) => {
+  if(location.hash !== '#checkout' && document.body.classList.contains('checkout-mode')){
+    document.body.classList.remove('checkout-mode');
+    document.body.classList.remove('checkout-success');
+    document.getElementById('checkoutModal').classList.remove('open');
+  }
+});
+
+/* Render the sticky order-summary sidebar */
+function renderCheckoutSidebar(){
+  const items = document.getElementById('sidebarItems');
+  const totals = document.getElementById('sidebarTotals');
+  const mobile = document.getElementById('sidebarTotalMobile');
+  if(!items || !totals) return;
+
+  if(!cart.length){
+    items.innerHTML = '<p style="text-align:center;color:var(--muted);font-size:13px;padding:20px 0">Your cart is empty.</p>';
+    totals.innerHTML = '';
+    if(mobile) mobile.textContent = 'Order summary';
+    return;
+  }
+
+  items.innerHTML = cart.map(c => `
+    <div class="sidebar-item">
+      <div class="sidebar-item-img">
+        ${c.image ? `<img src="${c.image}" onerror="this.style.display='none'"/>` : '<div style="width:100%;height:100%;background:var(--accent);opacity:0.15;border-radius:4px"></div>'}
+      </div>
+      <div>
+        <div class="sidebar-item-name">${c.brand ? c.brand + ' ' + c.name : c.name}</div>
+        <div class="sidebar-item-meta">${c.type}${c.monthly ? ' · $' + c.monthly.toFixed(2) + '/mo' : ''}</div>
+      </div>
+      <div class="sidebar-item-price">$${(c.price || 0).toLocaleString()}</div>
+    </div>
+  `).join('');
+
+  const subtotal = cart.reduce((s, c) => s + (c.price || 0), 0);
+  const tax = subtotal * 0.0825;
+  const shipping = subtotal >= 100 ? 0 : 9.99;
+  const total = subtotal + tax + shipping;
+
+  totals.innerHTML = `
+    <div class="sidebar-row"><span>Subtotal</span><strong>$${subtotal.toFixed(2)}</strong></div>
+    <div class="sidebar-row"><span>Tax (8.25%)</span><strong>$${tax.toFixed(2)}</strong></div>
+    <div class="sidebar-row"><span>Shipping</span><strong>${shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</strong></div>
+    <div class="sidebar-row grand"><span>Total</span><strong>$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></div>
+  `;
+
+  if(mobile) mobile.textContent = 'Order summary · $' + total.toFixed(2);
+}
+
+function setAuthMode(mode){
+  checkoutState.authMode = mode;
+  document.getElementById('tabSignup').classList.toggle('active', mode === 'signup');
+  document.getElementById('tabSignin').classList.toggle('active', mode === 'signin');
+  document.getElementById('signupFields').style.display = mode === 'signup' ? 'block' : 'none';
+  document.getElementById('signinFields').style.display = mode === 'signin' ? 'block' : 'none';
+}
+
+function selectPayment(method){
+  checkoutState.paymentMethod = method;
+  document.getElementById('pm-card').classList.toggle('selected', method === 'card');
+  document.getElementById('pm-financing').classList.toggle('selected', method === 'financing');
+  document.getElementById('cardFields').style.display = method === 'card' ? 'block' : 'none';
+  document.getElementById('financingFields').style.display = method === 'financing' ? 'block' : 'none';
+}
+
+function selectFinancing(months){
+  checkoutState.financingMonths = months;
+  document.querySelectorAll('.financing-option').forEach(el => {
+    el.classList.toggle('selected', parseInt(el.dataset.months) === months);
+  });
+}
+
+function updateFinancingEstimates(){
+  const deviceTotal = cart.filter(c => c.type === 'device').reduce((s, c) => s + (c.price || 0), 0);
+  document.getElementById('fin-24').textContent = deviceTotal > 0 ? `$${(deviceTotal / 24).toFixed(2)}/mo` : '—';
+  document.getElementById('fin-36').textContent = deviceTotal > 0 ? `$${(deviceTotal / 36).toFixed(2)}/mo` : '—';
+}
+
+function gotoStep(n){
+  checkoutState.step = n;
+  for(let i = 1; i <= 3; i++){
+    const pane = document.getElementById('stepPane' + i);
+    const dot = document.querySelector(`.step-dot[data-step="${i}"]`);
+    pane.classList.toggle('active', i === n);
+    dot.classList.toggle('active', i === n);
+    dot.classList.toggle('done', i < n);
+  }
+  // Build review screen when landing on step 3
+  if(n === 3) renderReview();
+  // Refresh sidebar in case cart changed
+  renderCheckoutSidebar();
+  // Scroll page to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* Input formatters */
+function formatCardNumber(input){
+  let v = input.value.replace(/\s+/g, '').replace(/[^0-9]/g, '');
+  v = v.match(/.{1,4}/g)?.join(' ') || v;
+  input.value = v;
+}
+function formatExpiry(input){
+  let v = input.value.replace(/\D/g, '');
+  if(v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2, 4);
+  input.value = v;
+}
+
+/* Luhn check — real card validation like a real checkout */
+function luhnCheck(num){
+  const digits = num.replace(/\s/g, '');
+  if(!/^\d{13,19}$/.test(digits)) return false;
+  let sum = 0, alt = false;
+  for(let i = digits.length - 1; i >= 0; i--){
+    let d = parseInt(digits[i]);
+    if(alt){ d *= 2; if(d > 9) d -= 9; }
+    sum += d;
+    alt = !alt;
+  }
+  return sum % 10 === 0;
+}
+
+function detectCardBrand(num){
+  const n = num.replace(/\s/g, '');
+  if(/^4/.test(n)) return 'Visa';
+  if(/^5[1-5]/.test(n) || /^2[2-7]/.test(n)) return 'Mastercard';
+  if(/^3[47]/.test(n)) return 'Amex';
+  if(/^6/.test(n)) return 'Discover';
+  return 'Card';
+}
+
+function showError(id, msg){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.add('has-error');
+  // Remove any existing error under this field
+  const next = el.nextElementSibling;
+  if(next && next.classList.contains('field-error')) next.remove();
+  const err = document.createElement('div');
+  err.className = 'field-error';
+  err.textContent = msg;
+  el.insertAdjacentElement('afterend', err);
+}
+function clearErrors(pane){
+  pane.querySelectorAll('.has-error').forEach(e => e.classList.remove('has-error'));
+  pane.querySelectorAll('.field-error').forEach(e => e.remove());
+}
+
+function validateAndNext(step){
+  const pane = document.getElementById('stepPane' + step);
+  clearErrors(pane);
+  let valid = true;
+
+  if(step === 1){
+    if(checkoutState.authMode === 'signup'){
+      const required = ['firstName', 'lastName', 'email', 'phone', 'dob', 'password', 'street', 'city', 'state', 'zip'];
+      for(const f of required){
+        const el = document.getElementById('f-' + f);
+        if(!el.value.trim()){ showError('f-' + f, 'Required'); valid = false; }
+      }
+      const email = document.getElementById('f-email').value.trim();
+      if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showError('f-email', 'Invalid email'); valid = false; }
+      const pw = document.getElementById('f-password').value;
+      if(pw && pw.length < 8){ showError('f-password', 'At least 8 characters'); valid = false; }
+
+      if(valid){
+        checkoutState.customer = {
+          firstName: document.getElementById('f-firstName').value.trim(),
+          lastName: document.getElementById('f-lastName').value.trim(),
+          email: email,
+          phone: document.getElementById('f-phone').value.trim(),
+          dob: document.getElementById('f-dob').value,
+          accountType: 'new'
+        };
+        checkoutState.shipping = {
+          street: document.getElementById('f-street').value.trim(),
+          city: document.getElementById('f-city').value.trim(),
+          state: document.getElementById('f-state').value,
+          zip: document.getElementById('f-zip').value.trim(),
+          country: 'US'
+        };
+      }
+    } else {
+      // Sign-in path — for demo, any non-empty email works
+      const email = document.getElementById('f-signin-email').value.trim();
+      if(!email){ showError('f-signin-email', 'Required'); valid = false; }
+      if(valid){
+        // Pretend we pulled this from our customer record
+        checkoutState.customer = {
+          firstName: 'Returning',
+          lastName: 'Customer',
+          email: email,
+          phone: '(555) 000-0000',
+          accountType: 'existing'
+        };
+        checkoutState.shipping = {
+          street: '428 Lemmon Ave',
+          city: 'Dallas',
+          state: 'TX',
+          zip: '75219',
+          country: 'US'
+        };
+      }
+    }
+  }
+
+  if(step === 2){
+    if(checkoutState.paymentMethod === 'card'){
+      const num = document.getElementById('f-cardNumber').value;
+      const exp = document.getElementById('f-expiry').value;
+      const cvv = document.getElementById('f-cvv').value;
+      const name = document.getElementById('f-cardName').value.trim();
+      // Demo: only require the fields to be filled in. Format/Luhn checks disabled.
+      if(!num){ showError('f-cardNumber', 'Required'); valid = false; }
+      if(!exp){ showError('f-expiry', 'Required'); valid = false; }
+      if(!cvv){ showError('f-cvv', 'Required'); valid = false; }
+      if(!name){ showError('f-cardName', 'Required'); valid = false; }
+      if(valid){
+        const digits = num.replace(/\s/g, '');
+        checkoutState.payment = {
+          method: 'card',
+          last4: digits.slice(-4),
+          brand: detectCardBrand(num),
+          expiry: exp,
+          nameOnCard: name
+        };
+      }
+    } else {
+      // Financing
+      const num = document.getElementById('f-finCardNumber').value;
+      const exp = document.getElementById('f-finExpiry').value;
+      const cvv = document.getElementById('f-finCvv').value;
+      // Demo: only require the fields to be filled in. Format/Luhn checks disabled.
+      if(!num){ showError('f-finCardNumber', 'Required'); valid = false; }
+      if(!exp){ showError('f-finExpiry', 'Required'); valid = false; }
+      if(!cvv){ showError('f-finCvv', 'Required'); valid = false; }
+      if(valid){
+        const digits = num.replace(/\s/g, '');
+        checkoutState.payment = {
+          method: 'financing',
+          financingMonths: checkoutState.financingMonths,
+          last4: digits.slice(-4),
+          brand: detectCardBrand(num),
+          expiry: exp
+        };
+      }
+    }
+    checkoutState.billingSameAsShipping = document.getElementById('f-billingSame').checked;
+  }
+
+  if(!valid) return;
+
+  if(step < 3) gotoStep(step + 1);
+}
+
+function renderReview(){
+  const subtotal = cart.reduce((s, c) => s + (c.price || 0), 0);
+  const deviceTotal = cart.filter(c => c.type === 'device').reduce((s, c) => s + (c.price || 0), 0);
+  const tax = subtotal * 0.0825; // ~TX sales tax
+  const shipping = subtotal >= 100 ? 0 : 9.99;
+  const monthlyFinancing = checkoutState.paymentMethod === 'financing' && deviceTotal > 0 ? deviceTotal / checkoutState.financingMonths : 0;
+  const dueToday = checkoutState.paymentMethod === 'financing'
+    ? (subtotal - deviceTotal + tax + shipping)  // pay for plans + tax + shipping today
+    : (subtotal + tax + shipping);
+
+  checkoutState.totals = {
+    subtotal: +subtotal.toFixed(2),
+    tax: +tax.toFixed(2),
+    shipping,
+    deviceTotal: +deviceTotal.toFixed(2),
+    monthlyFinancing: +monthlyFinancing.toFixed(2),
+    dueToday: +dueToday.toFixed(2),
+    total: +(subtotal + tax + shipping).toFixed(2)
+  };
+
+  const c = checkoutState.customer;
+  const s = checkoutState.shipping;
+  const p = checkoutState.payment;
+
+  const body = document.getElementById('reviewBody');
+  body.innerHTML = `
+    <div class="review-section">
+      <div class="review-section-title">
+        <h4>Order · ${cart.length} ${cart.length === 1 ? 'item' : 'items'}</h4>
+      </div>
+      <div class="review-items">
+        ${cart.map(item => `
+          <div class="review-item">
+            <div class="review-item-img">
+              ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'"/>` : '<div style="width:100%;height:100%;background:#c2410c;opacity:0.2;border-radius:4px"></div>'}
+            </div>
+            <div>
+              <div class="review-item-name">${item.brand ? item.brand + ' ' + item.name : item.name}</div>
+              <div class="review-item-meta">${item.type}${item.storage ? ' · ' + item.storage + ' GB' : ''}</div>
+            </div>
+            <div class="review-item-price">$${(item.price || 0).toLocaleString()}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="review-section">
+      <div class="review-section-title">
+        <h4>Contact & shipping</h4>
+        <button onclick="gotoStep(1)">Edit</button>
+      </div>
+      <div class="review-line"><strong>${c.firstName} ${c.lastName}</strong></div>
+      <div class="review-line">${c.email} · ${c.phone}</div>
+      <div class="review-line">${s.street}</div>
+      <div class="review-line">${s.city}, ${s.state} ${s.zip}</div>
+      ${c.accountType === 'new' ? '<div class="review-line" style="margin-top:10px;font-family:var(--ff-mono);font-size:11px;color:var(--accent);">New account will be created on submission</div>' : ''}
+    </div>
+
+    <div class="review-section">
+      <div class="review-section-title">
+        <h4>Payment</h4>
+        <button onclick="gotoStep(2)">Edit</button>
+      </div>
+      ${p.method === 'card' ? `
+        <div class="review-line"><strong>${p.brand}</strong> ending in ${p.last4}</div>
+        <div class="review-line">Expires ${p.expiry} · ${p.nameOnCard}</div>
+        <div class="review-line">Billing address ${checkoutState.billingSameAsShipping ? 'same as shipping' : 'separate'}</div>
+      ` : `
+        <div class="review-line"><strong>${p.financingMonths}-month financing · 0% APR</strong></div>
+        <div class="review-line">Device ($${checkoutState.totals.deviceTotal.toLocaleString()}) spread over ${p.financingMonths} months</div>
+        <div class="review-line">Monthly payment: <strong>$${checkoutState.totals.monthlyFinancing.toFixed(2)}</strong> on ${p.brand} •• ${p.last4}</div>
+      `}
+    </div>
+
+    <div class="review-section">
+      <div class="review-section-title">
+        <h4>Totals</h4>
+      </div>
+      <table class="totals-table">
+        <tr><td>Subtotal</td><td>$${subtotal.toFixed(2)}</td></tr>
+        <tr><td>Tax (8.25%)</td><td>$${tax.toFixed(2)}</td></tr>
+        <tr><td>Shipping</td><td>${shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</td></tr>
+        ${p.method === 'financing' && deviceTotal > 0 ? `
+          <tr><td style="color:var(--accent)">Device financed (${p.financingMonths} mo)</td><td style="color:var(--accent)">−$${deviceTotal.toFixed(2)}</td></tr>
+        ` : ''}
+        <tr class="grand"><td>Due today</td><td>$${checkoutState.totals.dueToday.toFixed(2)}</td></tr>
+        ${p.method === 'financing' && deviceTotal > 0 ? `
+          <tr><td style="padding-top:8px;font-family:var(--ff-mono);font-size:11px;color:var(--muted)">Plus $${checkoutState.totals.monthlyFinancing.toFixed(2)}/mo × ${p.financingMonths} months</td><td></td></tr>
+        ` : ''}
+      </table>
+    </div>
+  `;
+}
+
+/* =========================================================
+   PLACE ORDER — shows one-time cross-sell modal if cart is
+   missing categories, else fires submitOrder directly.
+   ========================================================= */
+let xsModalShown = false;
+
+function tryPlaceOrder(){
+  // If we've already shown the cross-sell modal this checkout, just submit
+  if(xsModalShown){ submitOrder(); return; }
+  // Determine which categories are missing (same logic as drawer cross-sell)
+  const types = new Set(cart.map(c => c.type));
+  const hasBundle = types.has('bundle');
+  const hasDevice = types.has('device');
+  const hasPlan = types.has('plan');
+  const hasAccessory = types.has('accessory');
+
+  // If all 4 categories present, or if cart has a bundle and accessory, skip modal
+  if((hasDevice && hasPlan && hasAccessory && hasBundle) || (hasBundle && hasAccessory)){
+    submitOrder();
+    return;
+  }
+  // Show the cross-sell modal
+  showCrossSellModal();
+}
+
+function showCrossSellModal(){
+  xsModalShown = true;
+  refreshCrossSellModal();
+  document.getElementById('xsModal').classList.add('open');
+}
+
+/* User dismisses the modal — either skipping or continuing checkout.
+   accepted = true means "Continue checkout" (proceeds to submit),
+   accepted = false means "No thanks" (also proceeds to submit; both
+   paths submit because the modal is one-time per checkout session). */
+function dismissCrossSellModal(accepted){
+  document.getElementById('xsModal').classList.remove('open');
+  // Either way, fire the submit. If user added items, they're already in cart.
+  submitOrder();
+}
+
+async function submitOrder(){
+  const btn = document.getElementById('submitOrderBtn');
+  btn.disabled = true;
+  btn.textContent = 'Processing…';
+
+  /* =====================================================================
+     THIS IS THE PEGA CALL.
+     The complete payload below goes to /api/pega-order, which (in
+     production) creates a parent case in Pega with customer details
+     plus cart line items. In the demo, the fetch shim returns a fake
+     order ID. The payload shape is identical either way.
+     ===================================================================== */
+  const payload = {
+    customer: checkoutState.customer,
+    shipping: checkoutState.shipping,
+    billing: checkoutState.billingSameAsShipping ? checkoutState.shipping : checkoutState.shipping, // demo: same
+    payment: checkoutState.payment,
+    items: cart.map(c => ({
+      id: c.id,
+      type: c.type,
+      brand: c.brand || null,
+      name: c.name,
+      price: c.price,
+      storage: c.storage || null
+    })),
+    totals: checkoutState.totals,
+    channel: 'web-portal',
+    submittedAt: new Date().toISOString()
+  };
+
+  try {
+    const resp = await fetch('/api/pega-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await resp.json();
+
+    // Show confirmation inside the review pane
+    document.getElementById('reviewBody').innerHTML = `
+      <div class="flow-result">
+        <div class="result-icon">✓</div>
+        <h2 style="font-family:var(--ff-display);font-size:32px;font-weight:400;letter-spacing:-0.02em;margin:16px 0 10px">Order placed</h2>
+        <p style="color:var(--ink-soft);margin-bottom:24px">Confirmation sent to <strong>${checkoutState.customer.email}</strong>.</p>
+        <div style="text-align:left; background: var(--paper-2); padding: 24px; border-radius: 14px;">
+          <div style="font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:6px">Order ID</div>
+          <div style="font-family:var(--ff-mono);font-size:18px;margin-bottom:18px">${result.orderId}</div>
+          <div style="font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:6px">Status</div>
+          <div style="font-family:var(--ff-mono);font-size:13px;color:var(--mint);margin-bottom:18px">${result.status || 'Processing'}</div>
+          <div style="font-family:var(--ff-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:6px">Delivery</div>
+          <div style="font-family:var(--ff-mono);font-size:13px;color:var(--ink-soft)">${result.estimatedDelivery || 'Next business day'}</div>
+        </div>
+        ${checkoutState.customer.accountType === 'new' ? `
+          <div style="margin-top:20px;padding:14px;background:rgba(194,65,12,0.08);border-radius:10px;font-size:13px;color:var(--ink-soft)">
+            Your iConnecTelco account has been created. Sign in anytime with <strong>${checkoutState.customer.email}</strong>.
+          </div>
+        ` : ''}
+      </div>
+    `;
+    document.querySelector('#stepPane3 .step-actions').innerHTML = `
+      <button class="btn-ghost" onclick="finishCheckout('catalog')">Continue shopping</button>
+      <button class="btn-primary" onclick="finishCheckout('account')">View my orders →</button>
+    `;
+    // Mark all steps as done
+    document.querySelectorAll('.step-dot').forEach(d => d.classList.add('done'));
+    // Clear cart immediately so badge reads 0 and reopening the cart shows empty state
+    cart.length = 0;
+    updateCartUI();
+    // Hide the cart icon and sidebar on the success screen
+    document.body.classList.add('checkout-success');
+    toast('Order ' + result.orderId + ' placed');
+  } catch(err){
+    btn.disabled = false;
+    btn.textContent = 'Place order →';
+    toast('Order failed — please try again');
+  }
+}
+
+/* Finish checkout from the success state — clears success body class, closes
+   checkout, optionally scrolls to a section. */
+function finishCheckout(target){
+  document.body.classList.remove('checkout-success');
+  closeCheckout();
+  resetCheckout();
+  if(target === 'account'){
+    setTimeout(() => {
+      const el = document.getElementById('account');
+      if(el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 250);
+  }
+}
+
+function resetCheckout(){
+  cart.length = 0;
+  updateCartUI();
+  checkoutState = { step: 1, authMode: 'signup', paymentMethod: 'card', financingMonths: 24, billingSameAsShipping: true, customer: {}, shipping: {}, payment: {} };
+  // Reset forms
+  document.querySelectorAll('#checkoutModal input, #checkoutModal select').forEach(i => { i.value = ''; i.classList.remove('has-error'); });
+  document.querySelectorAll('#checkoutModal .field-error').forEach(e => e.remove());
+  document.getElementById('f-country').value = 'United States';
+  document.getElementById('f-billingSame').checked = true;
+  document.querySelector('#stepPane3 .step-actions').innerHTML = `
+    <button class="btn-ghost" onclick="gotoStep(2)">← Back</button>
+    <button class="btn-primary" id="submitOrderBtn" onclick="tryPlaceOrder()">Place order →</button>
+  `;
+  // Reset the per-session "shown cross-sell modal" flag so it can show again next checkout
+  xsModalShown = false;
+  setAuthMode('signup');
+  selectPayment('card');
+  selectFinancing(24);
+}
+
+/* Self-service flows */
+const flowTemplates = {
+  activation:{title:'New activation',eyebrow:'Service · 01',lede:"Bring a new line online. We'll verify your ID, provision an eSIM or ship a physical SIM, and activate your number autonomously.",pegaCase:'CT-ACT-NEW',fields:[{label:'Full legal name',type:'text',name:'name'},{label:'Date of birth',type:'date',name:'dob'},{label:'SIM type',type:'select',name:'simType',options:['eSIM (instant)','Physical SIM (next-day)']},{label:'Plan',type:'select',name:'plan',options:['Essential','Plus','Ultra']}]},
+  upgrade:{title:'Device upgrade',eyebrow:'Service · 02',lede:'Pick a new device, keep your existing plan, and optionally trade in your old phone for instant credit.',pegaCase:'CT-UPG-NEW',fields:[{label:'Current mobile number',type:'tel',name:'msisdn'},{label:'New device',type:'select',name:'device',options:devices.map(d=>`${d.brand} ${d.name}`)},{label:'Trade-in?',type:'select',name:'tradeIn',options:['No','Yes — evaluate now']},{label:'Financing',type:'select',name:'financing',options:['Pay in full','24 months 0% APR','36 months 0% APR']}]},
+  simswap:{title:'SIM swap',eyebrow:'Service · 03',lede:"Secure SIM swap with ID verification. Use this if your SIM is lost, broken, or you're moving to eSIM.",pegaCase:'CT-SIM-SWAP',fields:[{label:'Mobile number',type:'tel',name:'msisdn'},{label:'Reason',type:'select',name:'reason',options:['Lost/stolen','Damaged','Upgrading to eSIM','New device']},{label:'Identity verification',type:'select',name:'idMethod',options:['Video selfie (fastest)','Document upload','In-store']}]},
+  planchange:{title:'Plan change',eyebrow:'Service · 04',lede:'Switch plans instantly. Your bill adjusts pro-rata — no surprises.',pegaCase:'CT-PLAN-CHG',fields:[{label:'Mobile number',type:'tel',name:'msisdn'},{label:'New plan',type:'select',name:'newPlan',options:['Essential — $25','Plus — $45','Ultra — $75']},{label:'Effective',type:'select',name:'effective',options:['Immediately','Next billing cycle']}]},
+  portin:{title:'Port-in from another carrier',eyebrow:'Service · 05',lede:"Bring your number. We'll validate port eligibility with your current carrier and complete the transfer — typically under 10 minutes.",pegaCase:'CT-PORT-IN',fields:[{label:'Number to port',type:'tel',name:'msisdn'},{label:'Current carrier',type:'select',name:'carrier',options:['AT&T','Verizon','T-Mobile','Mint','Cricket','Other']},{label:'Account number (with old carrier)',type:'text',name:'acctNum'},{label:'Transfer PIN',type:'text',name:'pin'},{label:'New plan',type:'select',name:'plan',options:['Essential','Plus','Ultra']}]},
+  bundle:{title:'Build a bundle',eyebrow:'Service · 06',lede:'Combine mobile, home internet, and accessories for up to 35% off.',pegaCase:'CT-BUNDLE',fields:[{label:'Lines',type:'select',name:'lines',options:['1','2','3','4','5+']},{label:'Mobile plan',type:'select',name:'mobile',options:['Plus','Ultra']},{label:'Home internet',type:'select',name:'internet',options:['None','Fiber Start','Fiber Pro','Fiber Max']}]}
+};
+
+function startFlow(key){
+  const t = flowTemplates[key];
+  if(!t) return;
+  const body = document.getElementById('flowBody');
+  body.innerHTML = `
+    <div class="flow-steps"><div class="flow-step active"></div><div class="flow-step"></div><div class="flow-step"></div></div>
+    <div class="eyebrow"><span class="dot"></span><span>${t.eyebrow}</span></div>
+    <h2>${t.title}</h2>
+    <p>${t.lede}</p>
+    <form id="flowForm" onsubmit="submitFlow(event, '${key}')">
+      ${t.fields.map(f=>`
+        <div class="form-field">
+          <label>${f.label}</label>
+          ${f.type==='select' ? `<select name="${f.name}" required>${f.options.map(o=>`<option>${o}</option>`).join('')}</select>` : `<input type="${f.type}" name="${f.name}" required/>`}
+        </div>
+      `).join('')}
+      <button type="submit" class="btn-primary wide">Continue autonomously →</button>
+    </form>
+  `;
+  document.getElementById('flowModal').classList.add('open');
+}
+function closeFlow(){document.getElementById('flowModal').classList.remove('open');}
+
+async function submitFlow(ev, key){
+  ev.preventDefault();
+  const form = ev.target;
+  const data = Object.fromEntries(new FormData(form).entries());
+  const t = flowTemplates[key];
+  const steps = document.querySelectorAll('.flow-step');
+  steps[1].classList.add('active');
+  form.querySelector('button').textContent = 'Provisioning...';
+  form.querySelector('button').disabled = true;
+  try{
+    const resp = await fetch('/api/pega-case',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({caseType:t.pegaCase, flowKey:key, content:data})});
+    if(!resp.ok) throw new Error(`Status ${resp.status}`);
+    const result = await resp.json();
+    steps[2].classList.add('active');
+    document.getElementById('flowBody').innerHTML = `
+      <div class="flow-steps"><div class="flow-step active"></div><div class="flow-step active"></div><div class="flow-step active"></div></div>
+      <div class="flow-result">
+        <div class="result-icon">✓</div>
+        <h2>${t.title} — complete</h2>
+        <p>Your request has been processed autonomously.</p>
+        <div class="form-field" style="text-align:left; background: var(--paper-2); padding: 20px; border-radius: 14px; margin-top: 24px;">
+          <label>Case ID</label>
+          <div style="font-family: var(--ff-mono); font-size: 15px; margin-top: 6px;">${result.caseID}</div>
+          <label style="margin-top: 16px;">Status</label>
+          <div style="font-family: var(--ff-mono); font-size: 13px; color: var(--mint); margin-top: 6px;">${result.status}</div>
+          <label style="margin-top: 16px;">ETA</label>
+          <div style="font-family: var(--ff-mono); font-size: 13px; color: var(--ink-soft); margin-top: 6px;">${result.eta}</div>
+        </div>
+        <button class="btn-primary wide" onclick="closeFlow()" style="margin-top: 24px;">Done</button>
+      </div>
+    `;
+    toast('Request completed autonomously');
+  }catch(err){
+    document.getElementById('flowBody').innerHTML = `
+      <div class="flow-result">
+        <div class="result-icon error">!</div>
+        <h2>We'll take it from here</h2>
+        <p>We hit a step we couldn't resolve on our own. A specialist has been assigned — they have full context and will contact you in under 10 minutes.</p>
+        <div class="form-field" style="text-align:left; background: var(--paper-2); padding: 20px; border-radius: 14px; margin-top: 24px;">
+          <label>Reference</label>
+          <div style="font-family: var(--ff-mono); font-size: 15px; margin-top: 6px;">FALLBACK-${Date.now().toString(36).toUpperCase()}</div>
+        </div>
+        <button class="btn-primary wide" onclick="closeFlow()" style="margin-top: 24px;">Close</button>
+      </div>
+    `;
+  }
+}
+
+/* Toast */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* =========================================================
+   ACCESSORIES — 6 real watch/earbud SKUs from Apple/Samsung/Google
+   Verified prices via web search. Manufacturer CDN images
+   with SVG fallback if any URL fails to load.
+   ========================================================= */
+const accessories = [
+  {
+    id: 'apple-watch-11', cat: 'Watch', brand: 'Apple', name: 'Apple Watch Series 11',
+    price: 399, features: ['46mm aluminum', '5G cellular', '24h battery', 'watchOS 26'],
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Apple_watch_series_11.png/220px-Apple_watch_series_11.png',
+    fallbackAccent: '#d56b3b'
+  },
+  {
+    id: 'airpods-pro-3', cat: 'Earbuds', brand: 'Apple', name: 'AirPods Pro 3',
+    price: 249, features: ['H2 chip', '2× ANC', 'Heart-rate sensor', 'IP57'],
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/AirPods_Pro_3_in_charging_case.jpg/220px-AirPods_Pro_3_in_charging_case.jpg',
+    fallbackAccent: '#e8e3d8'
+  },
+  {
+    id: 'galaxy-watch-8-classic', cat: 'Watch', brand: 'Samsung', name: 'Galaxy Watch 8 Classic',
+    price: 499, features: ['46mm titanium', 'Rotating bezel', 'Wear OS 6', 'Gemini AI'],
+    image: 'https://images.samsung.com/is/image/samsung/p6pim/us/sm-l500nzkdxaa/gallery/us-galaxy-watch8-classic-l500-sm-l500nzkdxaa-thumb-548011820?$216_216_PNG$',
+    fallbackAccent: '#1a1a1a'
+  },
+  {
+    id: 'galaxy-buds-3-pro', cat: 'Earbuds', brand: 'Samsung', name: 'Galaxy Buds 3 Pro',
+    price: 249, features: ['ANC', 'Hi-Fi 24-bit', 'Galaxy AI translate', 'IP57'],
+    image: 'https://images.samsung.com/is/image/samsung/p6pim/us/sm-r630nzaaxar/gallery/us-galaxy-buds3-pro-r630-sm-r630nzaaxar-thumb-543258614?$216_216_PNG$',
+    fallbackAccent: '#d8d8d8'
+  },
+  {
+    id: 'pixel-watch-4', cat: 'Watch', brand: 'Google', name: 'Pixel Watch 4',
+    price: 349, features: ['41mm aluminum', 'Wear OS 6', '30h battery', 'Gemini built-in'],
+    image: 'https://lh3.googleusercontent.com/2EeIaOmnmbHvXHHV_aErcVa_AmiXMlMrJzaGcGEhE5xXJB2_S5gPZpPnK1NmfQfSzNMAy-uZH5fjeJtV=s300',
+    fallbackAccent: '#1d1d1b'
+  },
+  {
+    id: 'pixel-buds-pro-2', cat: 'Earbuds', brand: 'Google', name: 'Pixel Buds Pro 2',
+    price: 229, features: ['Tensor A1 chip', 'Silent Seal 2.0', 'Gemini live', 'IP54'],
+    image: 'https://lh3.googleusercontent.com/cmHOSi94f2EKqvOJUL-X7wF3nC5xFq-FK6Tm5gMq3lQEt1IgQbXpOG-5CaUBbBM7qlQUeRYRNoP2A=s300',
+    fallbackAccent: '#6a8d6b'
+  }
+];
+
+/* =========================================================
+   BUNDLES — ConnecTelco bundle packages
+   ========================================================= */
+const bundles = [
+  {
+    id: 'bn-essentials', cls: 'b1', save: 'Save $420 / year',
+    name: 'The Essentials',
+    desc: 'One phone of your choice + Plus mobile plan + 1 Gbps home internet.',
+    price: 130
+  },
+  {
+    id: 'bn-household', cls: 'b2', save: 'Save $680 / year',
+    name: 'The Household',
+    desc: 'Four lines + 5 Gbps home internet + two watches for the kids.',
+    price: 260
+  },
+  {
+    id: 'bn-remote', cls: 'b3', save: 'Save $540 / year',
+    name: 'The Remote Worker',
+    desc: 'Phone + tablet + dedicated hotspot + 1 Gbps home fiber + static IP.',
+    price: 210
+  }
+];
+
+/* =========================================================
+   ACCOUNT DASHBOARD — sample data for a returning customer
+   In production this comes from Pega via /api/customer/{id}
+   ========================================================= */
+const accountData = {
+  name: 'Ananya',
+  tier: 'Ultra',
+  memberSince: 'March 2019',
+  lifetimeValue: 8420,
+  lines: [
+    { number: '+1 (214) 555-0101', plan: 'Ultra', device: 'iPhone 17 Pro · 256 GB', status: 'Active' },
+    { number: '+1 (214) 555-0102', plan: 'Plus', device: 'Galaxy S25 Ultra · 256 GB', status: 'Active' },
+    { number: '+1 (214) 555-0103', plan: 'Essential', device: 'Pixel 10 Pro · 128 GB', status: 'Port pending' }
+  ],
+  usage: [
+    { label: 'Data · primary line', used: 42, total: 100, unit: 'GB', cls: 'ok' },
+    { label: 'Hotspot', used: 8, total: 15, unit: 'GB', cls: 'warn' },
+    { label: 'International talk', used: 34, total: 'Unlimited', unit: 'min', cls: 'ok', pct: 5 }
+  ],
+  orders: [
+    { name: 'iPhone 17 Pro · Cosmic Orange', id: 'ORD-MA8K2NX9', status: 'shipping', label: 'Shipping' },
+    { name: 'Apple Watch Series 11 · 46mm', id: 'ORD-MA82RPL3', status: 'delivered', label: 'Delivered' },
+    { name: 'Plan upgrade · Plus → Ultra', id: 'CT-PLAN-CHG-194', status: 'delivered', label: 'Active' },
+    { name: 'Galaxy Buds 3 Pro', id: 'ORD-M9XKBYW1', status: 'processing', label: 'Processing' }
+  ]
+};
+
+/* ---------- SVG fallbacks for accessories ---------- */
+function svgWatch(accent){
+  return `<svg class="acc-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="50" y="40" width="100" height="40" rx="10" fill="#2b2522"/>
+    <rect x="50" y="120" width="100" height="40" rx="10" fill="#2b2522"/>
+    <rect x="45" y="70" width="110" height="60" rx="20" fill="#14110f"/>
+    <rect x="52" y="77" width="96" height="46" rx="14" fill="${accent}" opacity="0.85"/>
+    <circle cx="100" cy="100" r="14" fill="none" stroke="#fff" stroke-width="2" opacity="0.9"/>
+    <path d="M100 92 L100 100 L106 100" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+function svgEarbuds(accent){
+  return `<svg class="acc-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <path d="M60 60 Q40 60 40 90 Q40 130 70 130 Q85 130 85 115 L85 85 Q85 60 60 60Z" fill="${accent}"/>
+    <path d="M140 60 Q160 60 160 90 Q160 130 130 130 Q115 130 115 115 L115 85 Q115 60 140 60Z" fill="${accent}"/>
+    <ellipse cx="62" cy="92" rx="8" ry="10" fill="#14110f"/>
+    <ellipse cx="138" cy="92" rx="8" ry="10" fill="#14110f"/>
+  </svg>`;
+}
+
+/* =========================================================
+   RENDER FUNCTIONS for the three new sections
+   ========================================================= */
+function renderAccessories(){
+  const track = document.getElementById('accessoryTrack');
+  if(!track) return;
+  track.innerHTML = accessories.map(a => {
+    const svgFallback = a.cat === 'Watch' ? svgWatch(a.fallbackAccent) : svgEarbuds(a.fallbackAccent);
+    const fallbackId = 'acc-fb-' + a.id;
+    return `
+      <article class="accessory-card" data-id="${a.id}">
+        <div class="accessory-image">
+          <img src="${a.image}" alt="${a.brand} ${a.name}" onerror="this.style.display='none'; document.getElementById('${fallbackId}').style.display='block';"/>
+          <div id="${fallbackId}" style="display:none">${svgFallback}</div>
+        </div>
+        <div class="accessory-body">
+          <div class="accessory-cat">${a.cat} · ${a.brand}</div>
+          <div class="accessory-name">${a.name}</div>
+          <div class="accessory-features">${a.features.slice(0,3).map(f=>`<span>${f}</span>`).join('')}</div>
+          <div class="accessory-foot">
+            <div class="accessory-price">$${a.price}</div>
+            <button class="add-btn" onclick="addAccessoryToCart('${a.id}')">Add</button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function renderBundles(){
+  const grid = document.getElementById('bundleGrid');
+  if(!grid) return;
+  grid.innerHTML = bundles.map(b => `
+    <article class="bundle-card ${b.cls}" data-id="${b.id}">
+      <div>
+        <div class="bundle-save">${b.save}</div>
+        <div class="bundle-name">${b.name}</div>
+        <div class="bundle-desc">${b.desc}</div>
+      </div>
+      <div class="bundle-foot">
+        <div class="bundle-price">$${b.price}<sub>/mo</sub></div>
+        <button class="bundle-btn" onclick="addBundleToCart('${b.id}')">Configure →</button>
+      </div>
+    </article>
+  `).join('');
+}
+
+function renderAccount(){
+  const grid = document.getElementById('accountGrid');
+  if(!grid) return;
+  const a = accountData;
+  grid.innerHTML = `
+    <!-- Greeting card (dark) -->
+    <div class="account-card dark">
+      <div class="ac-label" style="color:var(--paper-3)">
+        <span>Welcome back</span>
+        <a href="#" onclick="event.preventDefault(); toast('Signed out'); return false;">Sign out</a>
+      </div>
+      <div class="ac-greeting">Hello, <em>${a.name}</em>.</div>
+      <p class="ac-sub">You're on the <strong style="color:var(--paper)">${a.tier}</strong> plan, with us since ${a.memberSince}.</p>
+      <div class="ac-stats">
+        <div><strong>${a.lines.length}</strong><span>active lines</span></div>
+        <div><strong>$${a.lifetimeValue.toLocaleString()}</strong><span>lifetime value</span></div>
+        <div><strong>0</strong><span>open issues</span></div>
+      </div>
+    </div>
+
+    <!-- Usage card -->
+    <div class="account-card">
+      <div class="ac-label">
+        <span>Usage · current cycle</span>
+        <a href="#" onclick="event.preventDefault(); toast('Renews Nov 14');">Renews Nov 14</a>
+      </div>
+      <div class="usage-mini">
+        ${a.usage.map(u => {
+          const pct = u.total === 'Unlimited' ? (u.pct || 5) : Math.round((u.used / u.total) * 100);
+          return `
+            <div class="usage-mini-row">
+              <div class="usage-mini-top">
+                <span>${u.label}</span>
+                <strong>${u.used}${u.unit ? ' ' + u.unit : ''} / ${u.total}${typeof u.total === 'number' && u.unit ? ' ' + u.unit : ''}</strong>
+              </div>
+              <div class="usage-mini-bar"><div class="usage-mini-fill ${u.cls}" style="width:${pct}%"></div></div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Quick actions card -->
+    <div class="account-card">
+      <div class="ac-label"><span>Quick actions</span></div>
+      <div class="account-actions">
+        <button class="account-action" onclick="startFlow('upgrade')">
+          <span class="aa-icon">△</span>
+          <span class="aa-title">Upgrade device</span>
+          <span class="aa-sub">Trade-in eligible</span>
+        </button>
+        <button class="account-action" onclick="startFlow('planchange')">
+          <span class="aa-icon">≋</span>
+          <span class="aa-title">Change plan</span>
+          <span class="aa-sub">Instant</span>
+        </button>
+        <button class="account-action" onclick="startFlow('simswap')">
+          <span class="aa-icon">◇</span>
+          <span class="aa-title">SIM swap</span>
+          <span class="aa-sub">3 min</span>
+        </button>
+        <button class="account-action" onclick="startFlow('portin')">
+          <span class="aa-icon">↔</span>
+          <span class="aa-title">Add a number</span>
+          <span class="aa-sub">Port-in</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Lines card (span 2) -->
+    <div class="account-card span2">
+      <div class="ac-label">
+        <span>Lines on account · ${a.lines.length}</span>
+        <a href="#servicesHero" onclick="toast('Add another line')">Add line →</a>
+      </div>
+      <div class="lines-list">
+        ${a.lines.map(l => `
+          <div class="line-row">
+            <div class="line-meta">
+              <div class="line-num">${l.number}</div>
+              <div class="line-info">${l.plan} · ${l.device}</div>
+            </div>
+            <span class="line-status ${l.status === 'Active' ? '' : 'warn'}">${l.status}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Recent orders card -->
+    <div class="account-card">
+      <div class="ac-label">
+        <span>Recent activity</span>
+        <a href="#" onclick="event.preventDefault(); toast('All orders');">View all</a>
+      </div>
+      <div class="order-list">
+        ${a.orders.map(o => `
+          <div class="order-row">
+            <div>
+              <div class="order-name">${o.name}</div>
+              <div class="order-id">${o.id}</div>
+            </div>
+            <span class="order-status ${o.status}">${o.label}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+/* Add handlers for accessories and bundles */
+function addAccessoryToCart(id){
+  const a = accessories.find(x => x.id === id);
+  if(!a) return;
+  cart.push({ id: a.id, name: a.name, brand: a.brand, price: a.price, type: 'accessory', image: a.image, _key: Date.now() + Math.random() });
+  updateCartUI();
+  toast(`${a.brand} ${a.name} added to cart`);
+}
+function addBundleToCart(id){
+  const b = bundles.find(x => x.id === id);
+  if(!b) return;
+  cart.push({ id: b.id, name: b.name, price: b.price, type: 'bundle', _key: Date.now() + Math.random() });
+  updateCartUI();
+  toast(`${b.name} bundle added to cart`);
+}
+
+/* =========================================================
+   SIGN-IN MODAL — three states: signin, forgot, reset-sent.
+   Demo: any input is accepted, no real auth.
+   ========================================================= */
+let signInState = 'signin'; // 'signin' | 'signup' | 'forgot' | 'reset-sent'
+
+function openSignInModal(){
+  signInState = 'signin';
+  renderSignInBody();
+  document.getElementById('signinModal').classList.add('open');
+  // Focus the email field for keyboard friendliness
+  setTimeout(() => {
+    const f = document.getElementById('si-email');
+    if(f) f.focus();
+  }, 100);
+}
+function closeSignInModal(){
+  document.getElementById('signinModal').classList.remove('open');
+}
+
+function renderSignInBody(){
+  const body = document.getElementById('signinBody');
+  if(!body) return;
+
+  if(signInState === 'signin'){
+    body.innerHTML = `
+      <div class="signin-eyebrow"><span>Welcome back</span></div>
+      <h2 class="signin-title" id="signinTitle">Sign in to your account</h2>
+      <p class="signin-sub">Demo: any email and password will work.</p>
+      <form onsubmit="event.preventDefault(); doSignIn();">
+        <div class="form-field">
+          <label>Email or mobile</label>
+          <input type="text" id="si-email" placeholder="you@example.com" autocomplete="username"/>
+        </div>
+        <div class="form-field">
+          <label>Password</label>
+          <input type="password" id="si-password" autocomplete="current-password"/>
+        </div>
+        <a class="signin-forgot" onclick="switchToForgot()">Forgot password?</a>
+        <button type="submit" class="btn-primary wide">Sign in</button>
+      </form>
+      <div class="signin-divider"><span>or</span></div>
+      <p class="signin-newcust">New to iConnecTelco? <a onclick="switchToSignUp()">Create an account</a></p>
+    `;
+  } else if(signInState === 'signup'){
+    // Pre-fill email from signin view if user started there
+    const prefilledEmail = document.getElementById('si-email')?.value || '';
+    body.innerHTML = `
+      <div class="signin-eyebrow"><span>New here</span></div>
+      <h2 class="signin-title" id="signinTitle">Create your iConnecTelco account</h2>
+      <p class="signin-sub">Demo: any input works.</p>
+      <form onsubmit="event.preventDefault(); doSignUp();">
+        <div class="field-row">
+          <div class="form-field">
+            <label>First name</label>
+            <input type="text" id="su-firstName" autocomplete="given-name"/>
+          </div>
+          <div class="form-field">
+            <label>Last name</label>
+            <input type="text" id="su-lastName" autocomplete="family-name"/>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Email</label>
+          <input type="email" id="su-email" value="${prefilledEmail}" autocomplete="email"/>
+        </div>
+        <div class="form-field">
+          <label>Mobile number</label>
+          <input type="tel" id="su-phone" placeholder="(555) 000-0000" autocomplete="tel"/>
+        </div>
+        <div class="form-field">
+          <label>Password</label>
+          <input type="password" id="su-password" autocomplete="new-password"/>
+          <div class="password-hint">Min. 8 characters</div>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin:-4px 0 16px;line-height:1.5">By creating an account, you agree to our <a href="#" style="color:var(--accent);text-decoration:underline;text-underline-offset:2px">Terms</a> and <a href="#" style="color:var(--accent);text-decoration:underline;text-underline-offset:2px">Privacy Policy</a>.</p>
+        <button type="submit" id="su-submit" class="btn-primary wide">Create account</button>
+      </form>
+      <div class="signin-divider"><span>or</span></div>
+      <p class="signin-newcust">Already have an account? <a onclick="switchToSignIn()">Sign in</a></p>
+    `;
+    setTimeout(() => {
+      const f = document.getElementById('su-firstName');
+      if(f) f.focus();
+    }, 50);
+  } else if(signInState === 'forgot'){
+    const prefilledEmail = document.getElementById('si-email')?.value || '';
+    body.innerHTML = `
+      <div class="signin-eyebrow"><span>Account recovery</span></div>
+      <h2 class="signin-title">Reset your password</h2>
+      <p class="signin-sub">Enter your email and we'll send you a reset link.</p>
+      <form onsubmit="event.preventDefault(); sendResetLink();">
+        <div class="form-field">
+          <label>Email</label>
+          <input type="email" id="si-reset-email" value="${prefilledEmail}" autocomplete="email"/>
+        </div>
+        <button type="submit" class="btn-primary wide">Send reset link</button>
+      </form>
+      <a class="signin-back" onclick="switchToSignIn()">← Back to sign in</a>
+    `;
+    setTimeout(() => {
+      const f = document.getElementById('si-reset-email');
+      if(f && !f.value) f.focus();
+    }, 50);
+  } else if(signInState === 'reset-sent'){
+    const sentEmail = document.getElementById('si-reset-email')?.value || 'your inbox';
+    body.innerHTML = `
+      <div class="signin-success">
+        <div class="signin-success-icon">✓</div>
+        <h2 class="signin-title" style="text-align:center">Check your inbox</h2>
+        <p class="signin-sub" style="text-align:center">If an account exists for <strong>${sentEmail}</strong>, we've sent a password reset link. The link expires in 60 minutes.</p>
+        <button class="btn-primary wide" onclick="closeSignInModal()">Done</button>
+      </div>
+    `;
+  }
+}
+
+function switchToForgot(){
+  signInState = 'forgot';
+  renderSignInBody();
+}
+function switchToSignIn(){
+  signInState = 'signin';
+  renderSignInBody();
+}
+
+/* Sign in handler — demo accepts anything */
+function doSignIn(){
+  const email = document.getElementById('si-email')?.value?.trim() || '';
+  // Pull the first name from the email if it looks like one, else default
+  let name = 'Ananya';
+  if(email && email.includes('@')){
+    const local = email.split('@')[0];
+    // Extract a plausible first name: text before any . or _ or digit
+    const firstPart = local.split(/[._\d]/)[0];
+    if(firstPart.length >= 2){
+      name = firstPart.charAt(0).toUpperCase() + firstPart.slice(1).toLowerCase();
+    }
+  }
+  closeSignInModal();
+  toast(`Welcome back, ${name}`);
+  // Scroll to My Account section after a short delay (let modal close animation finish)
+  setTimeout(() => {
+    const el = document.getElementById('account');
+    if(el) el.scrollIntoView({ behavior: 'smooth' });
+  }, 350);
+}
+
+/* Forgot password — demo always succeeds */
+function sendResetLink(){
+  const email = document.getElementById('si-reset-email')?.value?.trim() || '';
+  if(!email){
+    toast('Please enter your email');
+    return;
+  }
+  signInState = 'reset-sent';
+  renderSignInBody();
+}
+
+/* Switch sign-in modal to sign-up view */
+function switchToSignUp(){
+  signInState = 'signup';
+  renderSignInBody();
+}
+
+/* Sign-up handler — demo accepts any input */
+function doSignUp(){
+  const firstName = document.getElementById('su-firstName')?.value?.trim() || '';
+  const lastName = document.getElementById('su-lastName')?.value?.trim() || '';
+  const email = document.getElementById('su-email')?.value?.trim() || '';
+  const phone = document.getElementById('su-phone')?.value?.trim() || '';
+  const password = document.getElementById('su-password')?.value || '';
+
+  // Clear any previous errors
+  document.querySelectorAll('#signinBody .has-error').forEach(e => e.classList.remove('has-error'));
+  document.querySelectorAll('#signinBody .field-error').forEach(e => e.remove());
+
+  // Demo-loose validation: only empty-field checks
+  let valid = true;
+  const fields = [
+    ['su-firstName', firstName],
+    ['su-lastName', lastName],
+    ['su-email', email],
+    ['su-phone', phone],
+    ['su-password', password]
+  ];
+  for(const [id, val] of fields){
+    if(!val){
+      const el = document.getElementById(id);
+      if(el){
+        el.classList.add('has-error');
+        const err = document.createElement('div');
+        err.className = 'field-error';
+        err.textContent = 'Required';
+        el.insertAdjacentElement('afterend', err);
+      }
+      valid = false;
+    }
+  }
+  if(!valid) return;
+
+  // Simulate account-creation delay
+  const btn = document.getElementById('su-submit');
+  if(btn){
+    btn.disabled = true;
+    btn.textContent = 'Creating…';
+  }
+
+  setTimeout(() => {
+    closeSignInModal();
+    toast(`Welcome to iConnecTelco, ${firstName}`);
+    setTimeout(() => {
+      const el = document.getElementById('devices');
+      if(el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 350);
+  }, 800);
+}
+
+/* =========================================================
+   CATALOG BOOTSTRAP
+   In production the catalog is fetched from /api/catalog, which
+   reads from Azure Blob Storage. If the fetch fails (offline, API
+   down, demo mode), we fall back to the embedded arrays above.
+   ========================================================= */
+async function loadCatalog() {
+  try {
+    const resp = await fetch('/api/catalog', { method: 'GET' });
+    if (!resp.ok) throw new Error('catalog api returned ' + resp.status);
+    const data = await resp.json();
+
+    // Replace embedded arrays in place so render functions pick up new values
+    if (Array.isArray(data.devices) && data.devices.length) {
+      devices.length = 0;
+      devices.push(...data.devices);
+    }
+    if (Array.isArray(data.accessories) && data.accessories.length) {
+      accessories.length = 0;
+      accessories.push(...data.accessories);
+    }
+    if (Array.isArray(data.bundles) && data.bundles.length) {
+      bundles.length = 0;
+      bundles.push(...data.bundles);
+    }
+    if (data.plans && typeof data.plans === 'object') {
+      if (Array.isArray(data.plans.mobile) && data.plans.mobile.length) {
+        mobilePlans.length = 0;
+        mobilePlans.push(...data.plans.mobile);
+      }
+      if (Array.isArray(data.plans.internet) && data.plans.internet.length) {
+        internetPlans.length = 0;
+        internetPlans.push(...data.plans.internet);
+      }
+      if (Array.isArray(data.plans.prepaid) && data.plans.prepaid.length) {
+        prepaidPlans.length = 0;
+        prepaidPlans.push(...data.plans.prepaid);
+      }
+    }
+    console.info('Catalog loaded from /api/catalog');
+  } catch (err) {
+    console.info('Catalog API unavailable; using embedded fallback catalog.', err.message);
+  }
+}
+
+/* Init */
+document.addEventListener('DOMContentLoaded', async ()=>{
+  // Fetch catalog from backend first (falls back to embedded arrays on failure)
+  await loadCatalog();
+  renderDevices();
+  renderPlans();
+  renderAccessories();
+  renderBundles();
+  renderAccount();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": { "value": "prod" },
+    "location": { "value": "eastus" },
+    "baseName": { "value": "iconnectelco" },
+    "tenantId": { "value": "REPLACE_WITH_YOUR_TENANT_ID" },
+    "keyVaultAdminObjectId": { "value": "REPLACE_WITH_YOUR_AAD_OBJECT_ID" },
+    "pegaBaseUrl": { "value": "https://your-prod-tenant.pegacloud.net" }
+  }
+}
