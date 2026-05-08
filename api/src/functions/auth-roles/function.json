@@ -1,0 +1,18 @@
+{
+  "scriptFile": "../index.js",
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "request",
+      "methods": ["POST"],
+      "route": "auth-roles"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "$return"
+    }
+  ]
+}
